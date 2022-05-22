@@ -7,6 +7,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.schema import MetaData
 
 from typing import Dict, List
+from settings import DATABASE_URL
 
 Base = declarative_base()
 
@@ -17,7 +18,7 @@ class User(Base):
     __tablename__ = "user"
     id = Column(Integer, primary_key=True)
     name = Column(String)
-    tg_name = Column(String)
+    tg_id = Column(Integer)
     email = Column(String)
     registration_dt = Column(String)
     recepts = relationship("Recept")
@@ -28,17 +29,19 @@ class Recept(Base):
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("user.id"))
     status = Column(String)
-    url = Column(String)
+    text = Column(String)
+    tg_id = Column(String)
 
 
 class DBDriver:
 
     def __init__(self):
-        self._db_url = "DATABASE_URL"
+        self._db_url = DATABASE_URL
         self._engine = create_engine(self._db_url)
-        sm = sessionmaker()
-        sm.configure(bind=self._engine)
-        self._session = sm()
+        self._session = sessionmaker().configure(bind=self._engine)
+
+    def __del__(self):
+        self._session.close()
 
     def add_user(self, user: dict):
         pass
