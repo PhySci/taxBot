@@ -31,17 +31,18 @@ def init_bot():
     dp.middleware.setup(LoggingMiddleware())
     return bot, dp
 
+
 bot, dp = init_bot()
 
 
-async def on_startup(dp):
+async def on_startup():
     _logger.warning('Starting connection. ')
     await bot.set_webhook(WEBHOOK_URL, drop_pending_updates=True)
 
 
-async def on_shutdown(dp):
+async def on_shutdown():
     _logger.warning('Bye! Shutting down webhook connection')
-    bot.close()
+    await bot.close()
 
 
 @dp.message_handler(regexp='https:\/\/lknpd.nalog.ru/api/v1/receipt/\d+/[\w]+/print')

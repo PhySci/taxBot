@@ -1,0 +1,4 @@
+sqlalchemy==1.4.36
+aiogram==2.20
+PyYAML~=6.0
+python-dotenv==0.20.0
