@@ -1,11 +1,10 @@
 import re
 
-from aiogram import Dispatcher, types
+from aiogram.types import Message
+from aiogram import types
 from aiogram.dispatcher import FSMContext
-from aiogram.dispatcher.filters import Text
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from db import DBDriver
-from src.app import dp
 
 
 class UserInput(StatesGroup):
@@ -17,17 +16,38 @@ class UserInput(StatesGroup):
     cmd_cancel = State()
 
 
-def register_handlers_user(dp: Dispatcher):
-    dp.register_message_handler(user_input_start, commands="registration", state="*")
-    dp.register_message_handler(user_input_first_name, state=UserInput.first_name)
-    dp.register_message_handler(user_input_last_name, state=UserInput.last_name)
-    dp.register_message_handler(user_input_patronymic_name, state=UserInput.patronymic_name)
-    dp.register_message_handler(user_input_email, state=UserInput.email)
-    dp.register_message_handler(cmd_cancel, state=UserInput.cmd_cancel)
-    dp.register_message_handler(cmd_cancel, Text(equals="Отмена", ignore_case=True), state="*")
+async def cmd_start(message: types.Message):
+    keyboard = types.InlineKeyboardMarkup()
+    buttons = ["Зарегистрироваться", "Доп. информация", "Выключить бот"]
+    keyboard.add(*buttons)
+    await message.answer("Добро полажловать в TaxBot!", reply_markup=keyboard)
 
 
-@dp.message_handler(lambda message: message.text == "Зарегистрироваться")
+async def catch_other_message(message: Message):
+    await message.answer("Неизвестный тип сообщений. Воспользуйся командой /help")
+
+
+async def additional_info(message: types.Message):
+    await message.reply("Тут будет дополнительная информация")
+
+
+async def get_help_command(message: types.Message):
+    await message.reply("Напиши мне что-нибудь")
+
+
+async def catch_receipt(message: Message):
+    print(message)
+    driver = DBDriver()
+    driver.add_receipt(message)
+    await message.answer("Чек принят!")
+
+
+# @dp.message_handler(lambda message: message.text == "Выключить бот", commands="stop")
+# async def stop(message: types.Message):
+#     await on_shutdown()
+#     await message.reply("Бот остановлен")
+
+
 async def user_input_start(message: types.Message):
     await UserInput.first_name.set()
     await message.answer("Введите ваше ИМЯ: ")
