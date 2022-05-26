@@ -48,7 +48,6 @@ async def catch_receipt(message: Message):
     driver = DBDriver()
     driver.add_receipt(message)
     await message.answer("Чек принят!")
-    pass
 
 
 @dp.message_handler()
@@ -61,10 +60,10 @@ async def additional_info(message: types.Message):
     await message.reply("Тут будет дополнительная информация")
 
 
-@dp.message_handler(lambda message: message.text == "Выключить бот", commands="stop")
-async def stop(message: types.Message):
-    await on_shutdown()
-    await message.reply("Бот остановлен")
+# @dp.message_handler(lambda message: message.text == "Выключить бот", commands="stop")
+# async def stop(message: types.Message):
+#     await on_shutdown()
+#     await message.reply("Бот остановлен")
 
 
 @dp.message_handler(commands="start")

@@ -1,3 +1,5 @@
+import re
+
 from aiogram import Dispatcher, types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Text
@@ -50,15 +52,19 @@ async def user_input_patronymic_name(message: types.Message, state: FSMContext):
 
 
 async def user_input_email(message: types.Message, state: FSMContext):
+    pattern = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+    if re.match(pattern, message.text) is None:
+        await message.answer("Пожалуйста, напишите e-mail в формате user@example.com")
+        return
     await state.update_data(email=message.text)
     await state.update_data(tg_id=message.from_user.id)
     user_data = await state.get_data()
-    DBDriver.add_user(user_data)
+    user_db_object = DBDriver()
+    user_db_object.add_user(user_data)
     await state.finish()
 
 
 async def cmd_cancel(message: types.Message, state: FSMContext):
-
     current_state = await state.get_state()
     if current_state is None:
         return

@@ -23,11 +23,11 @@ class User(Base):
     registration_dt = Column(
         DateTime,
         server_default=datetime.datetime.utcnow)
-    receipts = relationship("Recept")
+    receipts = relationship("Receipt")
 
 
 class Receipt(Base):
-    __tablename__ = 'recept'
+    __tablename__ = 'receipt'
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("user.id"))
     status = Column(String)
@@ -59,5 +59,5 @@ class DBDriver:
     def add_receipt(self, receipt: dict):
         pass
 
-    def get_recepts(self):
+    def get_receipts(self):
         pass
