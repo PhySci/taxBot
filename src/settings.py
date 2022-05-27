@@ -1,6 +1,5 @@
 import os
 import logging
-import yaml
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -74,9 +73,4 @@ DATABASE_URL = os.getenv('DATABASE_URL')
 
 # is local development?
 # LOCAL_DEV = get_param({}, "LOCAL_DEVELOPMENT")
-LOCAL_DEV = os.getenv('LOCAL_DEVELOPMENT')
-
-
-
-
-
+LOCAL_DEV = os.getenv('LOCAL_DEV')

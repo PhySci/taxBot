@@ -1,5 +1,7 @@
 import logging
 
+from aiogram.types import BotCommand
+
 
 def setup_logging(logfile='log.txt', loglevel='DEBUG'):
     """
@@ -26,3 +28,13 @@ def setup_logging(logfile='log.txt', loglevel='DEBUG'):
 
     logger.addHandler(fh)
     logger.addHandler(ch)
+
+
+async def set_default_commands(dp):
+    await dp.bot.set_my_commands([
+        BotCommand("start", "Запуск"),
+        BotCommand("help", "Помощь"),
+        BotCommand("registration", "Зарегистрироваться"),
+        BotCommand("add_info", "Доп. информация"),
+        BotCommand("cancel", "Отменить текущее действие")
+    ])

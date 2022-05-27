@@ -1,12 +1,11 @@
 import datetime
 import logging
-import os
 
 from sqlalchemy import Column, String, Integer, ForeignKey, create_engine, DateTime
 from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.sql import func
 
+from settings import DATABASE_URL
 
 Base = declarative_base()
 
@@ -21,7 +20,9 @@ class User(Base):
     last_name = Column(String)
     patronymic_name = Column(String)
     email = Column(String)
-    registration_dt = Column(DateTime(timezone=True), server_default=func.now())
+    # registration_dt = Column(
+    #     DateTime,
+    #     server_default=datetime.datetime.utcnow)
     receipts = relationship("Receipt")
 
 
@@ -37,14 +38,12 @@ class Receipt(Base):
 class DBDriver:
 
     def __init__(self):
-        self._db_url = os.environ.get("DATABASE_URL")
+        self._db_url = DATABASE_URL
         self._engine = create_engine(self._db_url)
-        self._sm = sessionmaker(bind=self._engine)
-        #Base.metadata.create_all(self._engine)
+        self._session = sessionmaker().configure(bind=self._engine)
 
     def __del__(self):
-        pass
-        #self._session.close()
+        self._session.close()
 
     def add_user(self, user: dict):
         new_user = User(
@@ -54,10 +53,8 @@ class DBDriver:
             patronymic_name=user['patronymic_name'],
             email=user['email'],
         )
-        session = self._sm()
-        session.add(new_user)
-        session.commit()
-        session.close()
+        self._session.add(new_user)
+        self._session.commit()
 
     def add_receipt(self, receipt: dict):
         pass
