@@ -20,9 +20,9 @@ class User(Base):
     last_name = Column(String)
     patronymic_name = Column(String)
     email = Column(String)
-    registration_dt = Column(
-        DateTime,
-        server_default=datetime.datetime.utcnow)
+    # registration_dt = Column(
+    #     DateTime,
+    #     server_default=datetime.datetime.utcnow)
     receipts = relationship("Receipt")
 
 
