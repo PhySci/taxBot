@@ -70,9 +70,10 @@ async def user_input_email(message: types.Message, state: FSMContext):
     await state.update_data(email=message.text)
     await state.update_data(tg_id=message.from_user.id)
     user_data = await state.get_data()
-    # user_db_object = DBDriver()
-    # user_db_object.add_user(user_data)
+    user_db_object = DBDriver()
+    user_db_object.add_user(user_data)
     await state.finish()
+    # @TODO: вернуть пользователю осмысленное сообщение
 
 
 async def cmd_cancel(message: types.Message, state: FSMContext):

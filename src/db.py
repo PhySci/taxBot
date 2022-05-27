@@ -48,6 +48,7 @@ class DBDriver:
         #self._session.close()
 
     def add_user(self, user: dict):
+        # @TODO: проверка, что такого пользователя ещё нет в базе
         new_user = User(
             tg_id=int(user['tg_id']),
             first_name=user['first_name'],
@@ -59,6 +60,7 @@ class DBDriver:
         session.add(new_user)
         session.commit()
         session.close()
+        # @TODO: выдать осмысленное сообщение пользователю
 
     def add_receipt(self, receipt: dict):
         pass
