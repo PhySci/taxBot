@@ -104,7 +104,9 @@ async def get_help_command(message: types.Message):
 async def catch_receipt(message: types.Message):
     print(message)
     driver = DBDriver()
-    driver.add_receipt(message)
+    receipt = {"user_id": message["from"]["id"],
+               "text": message["text"]}
+    driver.add_receipt(receipt)
     await message.answer("Чек принят!")
 
 
