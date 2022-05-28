@@ -1,18 +1,14 @@
-import datetime
 import logging
 import os
-import unittest
 
-from sqlalchemy import Column, String, Integer, ForeignKey, create_engine, DateTime
+from sqlalchemy import Column, String, Integer, ForeignKey, create_engine, DateTime, Boolean
 from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.sql import func
 
-from settings import DATABASE_URL
+_logger = logging.getLogger(__name__)
 
 Base = declarative_base()
-
-_logger = logging.getLogger(__name__)
 
 STATUS_OK = 0
 STATUS_RECEIPT_UNKNOWN_USER = 1
@@ -20,6 +16,7 @@ STATUS_RECEIPT_ALREADY_EXIST = 2
 STATUS_USER_ALREADY_EXIST = 3
 
 STATUS_FAIL = 10
+
 
 class User(Base):
     __tablename__ = "user"
@@ -31,7 +28,9 @@ class User(Base):
     email = Column(String)
     status = Column(String)
     role = Column(String)
-    registration_dt = Column(DateTime(timezone=True), server_default=func.now())
+    use_reminder = Column(Boolean)
+    create_dt = Column(DateTime(timezone=True), server_default=func.now())
+    update_dt = Column(DateTime(timezone=True), onupdate=func.now())
     receipts = relationship("Receipt")
 
 
@@ -42,6 +41,8 @@ class Receipt(Base):
     status = Column(String)
     text = Column(String)
     tg_id = Column(String)
+    create_dt = Column(DateTime(timezone=True), server_default=func.now())
+    update_dt = Column(DateTime(timezone=True), onupdate=func.now())
 
 
 class DBDriver:
@@ -83,7 +84,8 @@ class DBDriver:
             patronymic_name=user['patronymic_name'],
             email=user['email'],
             status="active",
-            role="user"
+            role="user",
+            use_reminder=False
         )
 
         session.add(new_user)
@@ -97,7 +99,6 @@ class DBDriver:
         else:
             return STATUS_FAIL
 
-
     def add_receipt(self, receipt: dict):
         """
 
@@ -105,11 +106,17 @@ class DBDriver:
         :return:
         """
         session = self._sm()
+
         user_id = session.query(User.id).filter(User.tg_id == receipt["tg_id"]).first()
         if user_id is None:
             return STATUS_RECEIPT_UNKNOWN_USER
+        user_id = user_id[0]
+
+        if session.query(Receipt.id).filter(Receipt.text == receipt["text"]).count() > 0:
+            return STATUS_RECEIPT_ALREADY_EXIST
+
         receipt = Receipt(**receipt)
-        receipt.user_id = user_id[0]
+        receipt.user_id = user_id
         receipt.status = "active"
         session.add(receipt)
         session.commit()

@@ -3,10 +3,11 @@ import unittest
 from unittest import TestCase
 from dotenv import load_dotenv
 from db import DBDriver, STATUS_OK, STATUS_RECEIPT_UNKNOWN_USER, STATUS_USER_ALREADY_EXIST, STATUS_RECEIPT_ALREADY_EXIST
+import random
 
 conf_pth = os.path.join(os.path.dirname(__file__), 'env')
-r = load_dotenv(dotenv_path=conf_pth)
-import random
+load_dotenv(dotenv_path=conf_pth)
+
 
 class TestDB(TestCase):
 
@@ -14,6 +15,14 @@ class TestDB(TestCase):
     def setUpClass(cls) -> None:
         d = DBDriver()
         #d.reinit()
+
+        user = {"tg_id": 1,
+                "first_name": "Иван",
+                "last_name": "Иванов",
+                "patronymic_name": "Петрович",
+                "email": "test@ya.ru"}
+        d.add_user(user)
+
 
     def test_init(self):
         try:
@@ -23,30 +32,31 @@ class TestDB(TestCase):
 
     def test_add_user(self):
         d = DBDriver()
-        new_user = {"tg_id": random.randint(0, 1e7),
+        user_id = random.randint(10, 1e7)
+        user = {"tg_id": user_id,
                     "first_name": "Иван",
                     "last_name": "Иванов",
                     "patronymic_name": "Петрович",
                     "email": "test@ya.ru"}
-        self.assertEqual(d.add_user(new_user), STATUS_OK)
+        self.assertEqual(d.add_user(user), STATUS_OK)
+        self.assertEqual(d.add_user(user), STATUS_USER_ALREADY_EXIST)
 
     def test_add_receipt(self):
         d = DBDriver()
+
+        text = "https://lknpd.nalog.ru/api/v1/receipt/" + str(random.randint(0, 1e7)) + "/ab123d/print"
         new_receipt = {"tg_id": 1,
-                       "text": "https://lknpd.nalog.ru/api/v1/receipt/0000000000/123abcdfsdf/print"}
-        status = d.add_receipt(new_receipt)
-        self.assertEqual(status, STATUS_OK)
+                       "text": text}
+        self.assertEqual(d.add_receipt(new_receipt), STATUS_OK)
+        self.assertEqual(d.add_receipt(new_receipt), STATUS_RECEIPT_ALREADY_EXIST)
 
     def test_add_receipt_unknown_user(self):
         d = DBDriver()
-        text = "https://lknpd.nalog.ru/api/v1/receipt/" + str(random.randint(0, 1e7)) +  "/123abcdfsdf/print"
-        receipt = {"tg_id": 1111,
-                       "text": text }
+        text = "https://lknpd.nalog.ru/api/v1/receipt/" + str(random.randint(0, 1e7)) + "/123abcdfsdf/print"
+        receipt = {"tg_id": 2,
+                   "text": text}
         status = d.add_receipt(receipt)
         self.assertEqual(status, STATUS_RECEIPT_UNKNOWN_USER)
-
-        status = d.add_receipt(receipt)
-
 
 
 if __name__ == "__main__":
