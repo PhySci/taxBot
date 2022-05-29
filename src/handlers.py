@@ -1,9 +1,9 @@
 import re
-
 from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
-from db import DBDriver
+from aiogram.utils.callback_data import CallbackData
+from db import DBDriver, STATUS_OK, STATUS_RECEIPT_ALREADY_EXIST, STATUS_USER_ALREADY_EXIST, STATUS_RECEIPT_UNKNOWN_USER
 
 
 class UserInput(StatesGroup):
@@ -14,17 +14,42 @@ class UserInput(StatesGroup):
     tg_id = State()
 
 
-async def cmd_start(message: types.Message):
-    keyboard = types.InlineKeyboardMarkup()
+instance = CallbackData("button", "action")
+
+
+def get_keyboard():
+    keyboard = types.InlineKeyboardMarkup(row_width=1)
     buttons = [
-        types.InlineKeyboardButton(text="Зарегистрироваться", callback_data='registration'),
-        types.InlineKeyboardButton(text="Доп. информация", callback_data='add_info'),
+        types.InlineKeyboardButton(text="Зарегистрироваться", callback_data=instance.new(action="registrate")),
+        types.InlineKeyboardButton(text="Доп. информация", callback_data=instance.new(action="info")),
+        types.InlineKeyboardButton(text="Отменить регистрацию", callback_data=instance.new(action="cancel")),
     ]
     keyboard.add(*buttons)
+    return keyboard
+
+
+async def cmd_start(message: types.Message):
     await message.answer("Добро полажловать в TaxBot!"
                          " Нажмите кнопку или введите команду"
                          " (посмотреть можно введя /help) ",
-                         reply_markup=keyboard)
+                         reply_markup=get_keyboard())
+
+
+async def from_button(call: types.CallbackQuery, callback_data: dict, state: FSMContext):
+    if callback_data["action"] == "registrate":
+        await UserInput.first_name.set()
+        await call.message.answer("Введите ваше ИМЯ: ")
+
+    elif callback_data["action"] == "info":
+        await call.message.answer("Тут будет дополнительная информация")
+
+    elif callback_data["action"] == "cancel":
+        current_state = await state.get_state()
+        if current_state is None:
+            await call.message.answer("Нечего отменять")
+        else:
+            await state.finish()
+            await call.message.answer("Действие отменено")
 
 
 async def user_input_start(message: types.Message):
@@ -70,9 +95,16 @@ async def user_input_email(message: types.Message, state: FSMContext):
     await state.update_data(email=message.text)
     await state.update_data(tg_id=message.from_user.id)
     user_data = await state.get_data()
-    # user_db_object = DBDriver()
-    # user_db_object.add_user(user_data)
+    user_db_object = DBDriver()
+    status = user_db_object.add_user(user_data)
     await state.finish()
+    if status == STATUS_OK:
+        await message.answer("Вы успешно зарегистрированы.")
+    elif status == STATUS_USER_ALREADY_EXIST:
+        await message.answer("Этот пользователь телеграмма уже есть в нашей базе.")
+    else:
+        await message.answer("Ой, как же больно! Что-то сломалось внутри меня (")
+    # @TODO: вернуть пользователю осмысленное сообщение
 
 
 async def cmd_cancel(message: types.Message, state: FSMContext):
@@ -101,13 +133,15 @@ async def get_help_command(message: types.Message):
 
 
 async def catch_receipt(message: types.Message):
-    print(message)
     driver = DBDriver()
-    driver.add_receipt(message)
-    await message.answer("Чек принят!")
-
-
-# @dp.message_handler(lambda message: message.text == "Выключить бот", commands="stop")
-# async def stop(message: types.Message):
-#     await on_shutdown()
-#     await message.reply("Бот остановлен")
+    receipt = {"tg_id": message["from"]["id"],
+               "text": message["text"]}
+    status = driver.add_receipt(receipt)
+    if status == STATUS_OK:
+        await message.answer("Чек принят!")
+    elif status == STATUS_RECEIPT_ALREADY_EXIST:
+        await message.answer("Этот чек уже есть в нашей базе.")
+    elif status == STATUS_RECEIPT_UNKNOWN_USER:
+        await message.answer("Что-то я тебя не узнаю. Пожалуйста, зарегистрируйся, а потом отправь чек ещё раз")
+    else:
+        await message.answer("Ой, как же больно! Что-то сломалось внутри меня.")
