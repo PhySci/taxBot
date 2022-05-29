@@ -48,8 +48,14 @@ class Receipt(Base):
 class DBDriver:
 
     def __init__(self):
-        self._db_url = os.environ.get("DATABASE_URL")
-        self._engine = create_engine(self._db_url)
+        self.DB_NAME = os.environ.get("DB_NAME")
+        self.DB_ADDRESS = os.environ.get("DB_ADDRESS")
+        self.DB_PORT = os.environ.get("DB_PORT")
+        self.DB_USER = os.environ.get("DB_USER")
+        self.DB_PASSWORD = os.environ.get("DB_PASSWORD")
+        self._database_url = f"postgresql://{self.DB_USER}:{self.DB_PASSWORD}@" \
+                             f"{self.DB_ADDRESS}:{self.DB_PORT}/{self.DB_NAME}"
+        self._engine = create_engine(self._database_url)
         self._sm = sessionmaker(bind=self._engine)
         Base.metadata.create_all(self._engine)
 

@@ -8,8 +8,8 @@ from db import DBDriver, STATUS_OK, STATUS_RECEIPT_ALREADY_EXIST, STATUS_USER_AL
 
 class UserInput(StatesGroup):
     first_name = State()
-    last_name = State()
     patronymic_name = State()
+    last_name = State()
     email = State()
     tg_id = State()
 
@@ -58,31 +58,34 @@ async def user_input_start(message: types.Message):
 
 
 async def user_input_first_name(message: types.Message, state: FSMContext):
-    pattern = r"^[A-ЯЁа-яёA-Za-z]+$"
+    pattern = r"^[-A-ЯЁа-яёA-Za-z]+$"
     if re.match(pattern, message.text) is None:
         await message.answer("Пожалуйста, введите строку, состоящую из букв")
         return
     await state.update_data(first_name=message.text.capitalize())
     await UserInput.next()
+    await message.answer("Введите ваше ОТЧЕСТВО (если отсутствует, напишите 'нет'): ")
+
+
+async def user_input_patronymic_name(message: types.Message, state: FSMContext):
+    pattern = r"^[-A-ЯЁа-яёA-Za-z]+$"
+    if message.text == 'нет':
+        await state.update_data(patronymic_name=None)
+    else:
+        if re.match(pattern, message.text) is None:
+            await message.answer("Пожалуйста, введите строку, состоящую из букв")
+            return
+        await state.update_data(patronymic_name=message.text.capitalize())
+    await UserInput.next()
     await message.answer("Введите вашу ФАМИЛИЮ: ")
 
 
 async def user_input_last_name(message: types.Message, state: FSMContext):
-    pattern = r"^[A-ЯЁа-яёA-Za-z]+$"
+    pattern = r"^[-A-ЯЁа-яёA-Za-z]+$"
     if re.match(pattern, message.text) is None:
         await message.answer("Пожалуйста, введите строку, состоящую из букв")
         return
     await state.update_data(last_name=message.text.capitalize())
-    await UserInput.next()
-    await message.answer("Введите ваше ОТЧЕСТВО: ")
-
-
-async def user_input_patronymic_name(message: types.Message, state: FSMContext):
-    pattern = r"^[A-ЯЁа-яёA-Za-z]+$"
-    if re.match(pattern, message.text) is None:
-        await message.answer("Пожалуйста, введите строку, состоящую из букв")
-        return
-    await state.update_data(patronymic_name=message.text.capitalize())
     await UserInput.next()
     await message.answer("Введите ваш e-mail: ")
 
