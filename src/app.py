@@ -7,9 +7,8 @@ from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.contrib.middlewares.logging import LoggingMiddleware
 from aiogram.dispatcher import Dispatcher
 from aiogram.utils.executor import start_webhook
-from aiogram.dispatcher.filters import Text, Command
+from aiogram.dispatcher.filters import Text
 from settings import BOT_TOKEN, WEBHOOK_URL, WEBHOOK_PATH, WEBHOOK_HOST, WEBAPP_HOST, WEBAPP_PORT, LOCAL_DEV
-from src.filters import CommandNotInListFilter
 from utils import setup_logging, set_default_commands
 
 try:
@@ -52,26 +51,33 @@ commands_list = [
 
 def main():
     setup_logging()
+
+    dp.register_message_handler(handlers.cmd_start, commands="start")
+    dp.register_message_handler(handlers.additional_info, commands="add_info")
+    dp.register_message_handler(handlers.get_help_command, commands="help")
+
+    dp.register_message_handler(
+        handlers.catch_receipt,
+        regexp="https:\/\/lknpd.nalog.ru/api/v1/receipt/\d+/[\w]+/print"
+    )
+
+    dp.register_callback_query_handler(
+        handlers.from_button,
+        handlers.instance.filter(action=["registrate", "info", "cancel"]), state="*")
+
+    dp.register_message_handler(handlers.cmd_cancel, Text(equals="отмена", ignore_case=True), state="*")
+    dp.register_message_handler(handlers.cmd_cancel, Text(equals="/cancel", ignore_case=True), state="*")
+
+    dp.register_message_handler(handlers.user_input_start, commands="registration", state="*")
+    dp.register_message_handler(handlers.user_input_first_name, state=handlers.UserInput.first_name)
+    dp.register_message_handler(handlers.user_input_last_name, state=handlers.UserInput.last_name)
+    dp.register_message_handler(handlers.user_input_patronymic_name, state=handlers.UserInput.patronymic_name)
+    dp.register_message_handler(handlers.user_input_email, state=handlers.UserInput.email)
+
+    dp.register_message_handler(handlers.catch_other_message)
+
     if LOCAL_DEV:
         print("Enabled local mode")
-
-        dp.register_message_handler(handlers.cmd_start, commands="start")
-        dp.register_message_handler(handlers.additional_info, commands="add_info")
-        dp.register_message_handler(handlers.get_help_command, commands="help")
-        dp.register_message_handler(handlers.catch_receipt, regexp="https:\/\/lknpd.nalog.ru/api/v1/receipt/\d+/[\w]+/print")
-
-        #dp.register_callback_query_handler(handlers.user_input_start, text="registration")
-
-        dp.register_message_handler(handlers.cmd_cancel, Text(equals="отмена", ignore_case=True), state="*")
-        dp.register_message_handler(handlers.cmd_cancel, Text(equals="/cancel", ignore_case=True), state="*")
-        dp.register_message_handler(handlers.user_input_start, commands="registration", state="*")
-        dp.register_message_handler(handlers.user_input_first_name, state=handlers.UserInput.first_name)
-        dp.register_message_handler(handlers.user_input_last_name, state=handlers.UserInput.last_name)
-        dp.register_message_handler(handlers.user_input_patronymic_name, state=handlers.UserInput.patronymic_name)
-        dp.register_message_handler(handlers.user_input_email, state=handlers.UserInput.email)
-
-        dp.register_message_handler(handlers.catch_other_message)
-
         executor.start_polling(dp, skip_updates=True)
     else:
         print("Enabled non local mode")

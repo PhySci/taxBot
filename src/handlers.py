@@ -2,7 +2,9 @@ import re
 from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
+from aiogram.utils.callback_data import CallbackData
 from db import DBDriver, STATUS_OK, STATUS_RECEIPT_ALREADY_EXIST, STATUS_USER_ALREADY_EXIST, STATUS_RECEIPT_UNKNOWN_USER
+
 
 class UserInput(StatesGroup):
     first_name = State()
@@ -12,17 +14,42 @@ class UserInput(StatesGroup):
     tg_id = State()
 
 
-async def cmd_start(message: types.Message):
-    keyboard = types.InlineKeyboardMarkup()
+instance = CallbackData("button", "action")
+
+
+def get_keyboard():
+    keyboard = types.InlineKeyboardMarkup(row_width=1)
     buttons = [
-        types.InlineKeyboardButton(text="Зарегистрироваться", callback_data='registration'),
-        types.InlineKeyboardButton(text="Доп. информация", callback_data='add_info'),
+        types.InlineKeyboardButton(text="Зарегистрироваться", callback_data=instance.new(action="registrate")),
+        types.InlineKeyboardButton(text="Доп. информация", callback_data=instance.new(action="info")),
+        types.InlineKeyboardButton(text="Отменить регистрацию", callback_data=instance.new(action="cancel")),
     ]
     keyboard.add(*buttons)
+    return keyboard
+
+
+async def cmd_start(message: types.Message):
     await message.answer("Добро полажловать в TaxBot!"
                          " Нажмите кнопку или введите команду"
                          " (посмотреть можно введя /help) ",
-                         reply_markup=keyboard)
+                         reply_markup=get_keyboard())
+
+
+async def from_button(call: types.CallbackQuery, callback_data: dict, state: FSMContext):
+    if callback_data["action"] == "registrate":
+        await UserInput.first_name.set()
+        await call.message.answer("Введите ваше ИМЯ: ")
+
+    elif callback_data["action"] == "info":
+        await call.message.answer("Тут будет дополнительная информация")
+
+    elif callback_data["action"] == "cancel":
+        current_state = await state.get_state()
+        if current_state is None:
+            await call.message.answer("Нечего отменять")
+        else:
+            await state.finish()
+            await call.message.answer("Действие отменено")
 
 
 async def user_input_start(message: types.Message):
