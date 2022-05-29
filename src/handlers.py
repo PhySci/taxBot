@@ -1,10 +1,8 @@
 import re
-
 from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
-from db import DBDriver
-
+from db import DBDriver, STATUS_OK, STATUS_RECEIPT_ALREADY_EXIST, STATUS_USER_ALREADY_EXIST, STATUS_RECEIPT_UNKNOWN_USER
 
 class UserInput(StatesGroup):
     first_name = State()
@@ -70,9 +68,16 @@ async def user_input_email(message: types.Message, state: FSMContext):
     await state.update_data(email=message.text)
     await state.update_data(tg_id=message.from_user.id)
     user_data = await state.get_data()
-    # user_db_object = DBDriver()
-    # user_db_object.add_user(user_data)
+    user_db_object = DBDriver()
+    status = user_db_object.add_user(user_data)
     await state.finish()
+    if status == STATUS_OK:
+        await message.answer("Вы успешно зарегистрированы.")
+    elif status == STATUS_USER_ALREADY_EXIST:
+        await message.answer("Этот пользователь телеграмма уже есть в нашей базе.")
+    else:
+        await message.answer("Ой, как же больно! Что-то сломалось внутри меня (")
+    # @TODO: вернуть пользователю осмысленное сообщение
 
 
 async def cmd_cancel(message: types.Message, state: FSMContext):
@@ -101,13 +106,15 @@ async def get_help_command(message: types.Message):
 
 
 async def catch_receipt(message: types.Message):
-    print(message)
     driver = DBDriver()
-    driver.add_receipt(message)
-    await message.answer("Чек принят!")
-
-
-# @dp.message_handler(lambda message: message.text == "Выключить бот", commands="stop")
-# async def stop(message: types.Message):
-#     await on_shutdown()
-#     await message.reply("Бот остановлен")
+    receipt = {"tg_id": message["from"]["id"],
+               "text": message["text"]}
+    status = driver.add_receipt(receipt)
+    if status == STATUS_OK:
+        await message.answer("Чек принят!")
+    elif status == STATUS_RECEIPT_ALREADY_EXIST:
+        await message.answer("Этот чек уже есть в нашей базе.")
+    elif status == STATUS_RECEIPT_UNKNOWN_USER:
+        await message.answer("Что-то я тебя не узнаю. Пожалуйста, зарегистрируйся, а потом отправь чек ещё раз")
+    else:
+        await message.answer("Ой, как же больно! Что-то сломалось внутри меня.")
