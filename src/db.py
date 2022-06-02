@@ -137,4 +137,26 @@ class DBDriver:
             return STATUS_FAIL
 
     def get_receipts(self):
-        pass
+        session = self._sm()
+        json = {"data": []}
+        data = session.query(
+            User.first_name,
+            User.patronymic_name,
+            User.last_name,
+            Receipt.text,
+            Receipt.create_dt,
+            Receipt.update_dt).filter(User.id == Receipt.user_id).all()
+        for element in data:
+            element = element._asdict()
+            try:
+                element["create_dt"] = element["create_dt"].strftime("%d-%m-%Y")
+            except AttributeError as error:
+                element["create_dt"] = None
+                _logger.exception(error)
+            try:
+                element["update_dt"] = element["update_dt"].strftime("%d-%m-%Y")
+            except AttributeError as error:
+                element["update_dt"] = None
+                _logger.exception(error)
+            json["data"].append(element)
+        return json

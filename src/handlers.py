@@ -148,3 +148,8 @@ async def catch_receipt(message: types.Message):
         await message.answer("Что-то я тебя не узнаю. Пожалуйста, зарегистрируйся, а потом отправь чек ещё раз")
     else:
         await message.answer("Ой, как же больно! Что-то сломалось внутри меня.")
+
+
+async def get_receipts(message: types.Message):
+    driver = DBDriver()
+    json = driver.get_receipts()

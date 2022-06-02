@@ -10,10 +10,10 @@ docker image ls
 ```
 Запуск контейнера (если запуск из windows, дописать в начало строки 'winpty'):
 ```
-docker run --env-file ./.env --name <container name> -it -p 80:80 <image name> 
+docker run --env-file ./.env --name <container name> -it  -p 10080:80 <image name>
 ```
 Просмотр всех контейнеров:
-```
+``` 
 docker container ls -a
 ```
 Запустить контейнер:
