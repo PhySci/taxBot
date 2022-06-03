@@ -1,9 +1,22 @@
+import os
 import re
+import smtplib
+
 from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.utils.callback_data import CallbackData
+
 from db import DBDriver, STATUS_OK, STATUS_RECEIPT_ALREADY_EXIST, STATUS_USER_ALREADY_EXIST, STATUS_RECEIPT_UNKNOWN_USER
+
+from email import encoders
+from email.mime.base import MIMEBase
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+
+from json2excel import Json2Excel
+
+from settings import EMAIL_LOGIN, EMAIL_PASSWORD
 
 
 class UserInput(StatesGroup):
@@ -12,6 +25,10 @@ class UserInput(StatesGroup):
     last_name = State()
     email = State()
     tg_id = State()
+
+
+class SendingMail(StatesGroup):
+    email = State()
 
 
 instance = CallbackData("button", "action")
@@ -113,22 +130,22 @@ async def user_input_email(message: types.Message, state: FSMContext):
 async def cmd_cancel(message: types.Message, state: FSMContext):
     current_state = await state.get_state()
     if current_state is None:
-        await message.reply("Нечего отменять")
+        await message.answer("Нечего отменять")
     else:
         await state.finish()
-        await message.reply("Действие отменено")
+        await message.answer("Действие отменено")
 
 
 async def catch_other_message(message: types.Message):
-    await message.reply("Неизвестный тип сообщений. Воспользуйся командой /help")
+    await message.answer("Неизвестный тип сообщений. Воспользуйся командой /help")
 
 
 async def additional_info(message: types.Message):
-    await message.reply("Тут будет дополнительная информация")
+    await message.answer("Тут будет дополнительная информация")
 
 
 async def get_help_command(message: types.Message):
-    await message.reply(
+    await message.answer(
         "* Чтобы зарегистрироваться, введите команду /registration\n"
         "* Чтобы получить дополнительную информацию, введите команду /add_info\n"
         "* Чтобы отменить ввод, введите команду /cancel или напишите 'отмена'\n"
@@ -150,6 +167,55 @@ async def catch_receipt(message: types.Message):
         await message.answer("Ой, как же больно! Что-то сломалось внутри меня.")
 
 
-async def get_receipts(message: types.Message):
+def json_to_excel(json):
+    clear_data = json["data"]
+    json_loader = Json2Excel(head_name_cols=["create_dt", "update_dt"])
+    return json_loader.run(clear_data)
+
+
+def send_email(destination_email, filepath):
+    msg = MIMEMultipart()
+    msg['Subject'] = "Mailing list from the taxBot according to your request (XLS file)"
+    msg['From'] = EMAIL_LOGIN
+    msg['To'] = ', '.join(destination_email)
+
+    body = "This is an automated email"
+    msg.attach(MIMEText(body, 'plain'))
+
+    part = MIMEBase('application', "octet-stream")
+    part.set_payload(open(filepath, "rb").read())
+    encoders.encode_base64(part)
+    part.add_header('Content-Disposition', f'attachment; filename="{os.path.basename(filepath)}"')
+    msg.attach(part)
+
+    smtpObj = smtplib.SMTP('smtp.gmail.com', 587)
+    smtpObj.starttls()
+    smtpObj.login(EMAIL_LOGIN, EMAIL_PASSWORD)
+    smtpObj.sendmail(EMAIL_LOGIN, destination_email, msg.as_string())
+    smtpObj.quit()
+
+
+async def get_email_for_sending(message: types.Message):
+    await SendingMail.email.set()
+    await message.answer("Пожалуйста, напишите e-mail для отправки файла: ")
+
+
+async def get_receipts(message: types.Message, state: FSMContext):
+    pattern = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+    if re.match(pattern, message.text) is None:
+        await message.answer("Пожалуйста, напишите e-mail в формате user@example.com")
+        return
+    await state.update_data(email=message.text)
+    user_data = await state.get_data()
+    await state.finish()
+
     driver = DBDriver()
     json = driver.get_receipts()
+    excel_filepath = json_to_excel(json)
+    try:
+        send_email(user_data["email"], excel_filepath)
+        await message.answer("Вложение отправлено получателю. Необходимо проверить e-mail")
+    except Exception:
+        await message.answer("Ой, как же больно! Что-то сломалось внутри меня.")
+
+    os.remove(excel_filepath)

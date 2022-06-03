@@ -160,3 +160,4 @@ class DBDriver:
                 _logger.exception(error)
             json["data"].append(element)
         return json
+

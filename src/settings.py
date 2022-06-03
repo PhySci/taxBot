@@ -74,3 +74,7 @@ DATABASE_URL = os.getenv('DATABASE_URL')
 # is local development?
 # LOCAL_DEV = get_param({}, "LOCAL_DEVELOPMENT")
 LOCAL_DEV = os.getenv('LOCAL_DEV')
+
+# Variables for e-mail sending
+EMAIL_LOGIN = os.getenv('EMAIL_LOGIN')
+EMAIL_PASSWORD = os.getenv('EMAIL_PASSWORD')
