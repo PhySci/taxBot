@@ -2,27 +2,54 @@ import re
 from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
+from aiogram.utils.callback_data import CallbackData
 from db import DBDriver, STATUS_OK, STATUS_RECEIPT_ALREADY_EXIST, STATUS_USER_ALREADY_EXIST, STATUS_RECEIPT_UNKNOWN_USER
+
 
 class UserInput(StatesGroup):
     first_name = State()
-    last_name = State()
     patronymic_name = State()
+    last_name = State()
     email = State()
     tg_id = State()
 
 
-async def cmd_start(message: types.Message):
-    keyboard = types.InlineKeyboardMarkup()
+instance = CallbackData("button", "action")
+
+
+def get_keyboard():
+    keyboard = types.InlineKeyboardMarkup(row_width=1)
     buttons = [
-        types.InlineKeyboardButton(text="Зарегистрироваться", callback_data='registration'),
-        types.InlineKeyboardButton(text="Доп. информация", callback_data='add_info'),
+        types.InlineKeyboardButton(text="Зарегистрироваться", callback_data=instance.new(action="registrate")),
+        types.InlineKeyboardButton(text="Доп. информация", callback_data=instance.new(action="info")),
+        types.InlineKeyboardButton(text="Отменить регистрацию", callback_data=instance.new(action="cancel")),
     ]
     keyboard.add(*buttons)
+    return keyboard
+
+
+async def cmd_start(message: types.Message):
     await message.answer("Добро полажловать в TaxBot!"
                          " Нажмите кнопку или введите команду"
                          " (посмотреть можно введя /help) ",
-                         reply_markup=keyboard)
+                         reply_markup=get_keyboard())
+
+
+async def from_button(call: types.CallbackQuery, callback_data: dict, state: FSMContext):
+    if callback_data["action"] == "registrate":
+        await UserInput.first_name.set()
+        await call.message.answer("Введите ваше ИМЯ: ")
+
+    elif callback_data["action"] == "info":
+        await call.message.answer("Тут будет дополнительная информация")
+
+    elif callback_data["action"] == "cancel":
+        current_state = await state.get_state()
+        if current_state is None:
+            await call.message.answer("Нечего отменять")
+        else:
+            await state.finish()
+            await call.message.answer("Действие отменено")
 
 
 async def user_input_start(message: types.Message):
@@ -31,31 +58,34 @@ async def user_input_start(message: types.Message):
 
 
 async def user_input_first_name(message: types.Message, state: FSMContext):
-    pattern = r"^[A-ЯЁа-яёA-Za-z]+$"
+    pattern = r"^[-A-ЯЁа-яёA-Za-z]+$"
     if re.match(pattern, message.text) is None:
         await message.answer("Пожалуйста, введите строку, состоящую из букв")
         return
     await state.update_data(first_name=message.text.capitalize())
     await UserInput.next()
+    await message.answer("Введите ваше ОТЧЕСТВО (если отсутствует, напишите 'нет'): ")
+
+
+async def user_input_patronymic_name(message: types.Message, state: FSMContext):
+    pattern = r"^[-A-ЯЁа-яёA-Za-z]+$"
+    if message.text == 'нет':
+        await state.update_data(patronymic_name=None)
+    else:
+        if re.match(pattern, message.text) is None:
+            await message.answer("Пожалуйста, введите строку, состоящую из букв")
+            return
+        await state.update_data(patronymic_name=message.text.capitalize())
+    await UserInput.next()
     await message.answer("Введите вашу ФАМИЛИЮ: ")
 
 
 async def user_input_last_name(message: types.Message, state: FSMContext):
-    pattern = r"^[A-ЯЁа-яёA-Za-z]+$"
+    pattern = r"^[-A-ЯЁа-яёA-Za-z]+$"
     if re.match(pattern, message.text) is None:
         await message.answer("Пожалуйста, введите строку, состоящую из букв")
         return
     await state.update_data(last_name=message.text.capitalize())
-    await UserInput.next()
-    await message.answer("Введите ваше ОТЧЕСТВО: ")
-
-
-async def user_input_patronymic_name(message: types.Message, state: FSMContext):
-    pattern = r"^[A-ЯЁа-яёA-Za-z]+$"
-    if re.match(pattern, message.text) is None:
-        await message.answer("Пожалуйста, введите строку, состоящую из букв")
-        return
-    await state.update_data(patronymic_name=message.text.capitalize())
     await UserInput.next()
     await message.answer("Введите ваш e-mail: ")
 
@@ -118,3 +148,8 @@ async def catch_receipt(message: types.Message):
         await message.answer("Что-то я тебя не узнаю. Пожалуйста, зарегистрируйся, а потом отправь чек ещё раз")
     else:
         await message.answer("Ой, как же больно! Что-то сломалось внутри меня.")
+
+
+async def get_receipts(message: types.Message):
+    driver = DBDriver()
+    json = driver.get_receipts()
