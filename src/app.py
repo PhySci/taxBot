@@ -60,6 +60,7 @@ def main():
         handlers.catch_receipt,
         regexp="https:\/\/lknpd.nalog.ru/api/v1/receipt/\d+/[\w]+/print"
     )
+    dp.register_message_handler(handlers.get_receipts, commands="receipts")
 
     dp.register_callback_query_handler(
         handlers.from_button,
@@ -70,8 +71,8 @@ def main():
 
     dp.register_message_handler(handlers.user_input_start, commands="registration", state="*")
     dp.register_message_handler(handlers.user_input_first_name, state=handlers.UserInput.first_name)
-    dp.register_message_handler(handlers.user_input_last_name, state=handlers.UserInput.last_name)
     dp.register_message_handler(handlers.user_input_patronymic_name, state=handlers.UserInput.patronymic_name)
+    dp.register_message_handler(handlers.user_input_last_name, state=handlers.UserInput.last_name)
     dp.register_message_handler(handlers.user_input_email, state=handlers.UserInput.email)
 
     dp.register_message_handler(handlers.catch_other_message)
