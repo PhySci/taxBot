@@ -1,22 +1,16 @@
 import os
 import re
-import smtplib
 
 from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.utils.callback_data import CallbackData
 
-from db import DBDriver, STATUS_OK, STATUS_RECEIPT_ALREADY_EXIST, STATUS_USER_ALREADY_EXIST, STATUS_RECEIPT_UNKNOWN_USER
-
-from email import encoders
-from email.mime.base import MIMEBase
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
-
-from json2excel import Json2Excel
-
-from settings import EMAIL_LOGIN, EMAIL_PASSWORD
+from db import (
+    DBDriver, STATUS_OK, STATUS_FAIL, STATUS_RECEIPT_ALREADY_EXIST,
+    STATUS_USER_ALREADY_EXIST, STATUS_RECEIPT_UNKNOWN_USER, STATUS_MAIL_ALREADY_EXIST
+)
+from src.mailing import json_to_excel, send_email
 
 
 class UserInput(StatesGroup):
@@ -167,34 +161,6 @@ async def catch_receipt(message: types.Message):
         await message.answer("Ой, как же больно! Что-то сломалось внутри меня.")
 
 
-def json_to_excel(json):
-    clear_data = json["data"]
-    json_loader = Json2Excel(head_name_cols=["create_dt", "update_dt"])
-    return json_loader.run(clear_data)
-
-
-def send_email(destination_email, filepath):
-    msg = MIMEMultipart()
-    msg['Subject'] = "Mailing list from the taxBot according to your request (XLS file)"
-    msg['From'] = EMAIL_LOGIN
-    msg['To'] = ', '.join(destination_email)
-
-    body = "This is an automated email"
-    msg.attach(MIMEText(body, 'plain'))
-
-    part = MIMEBase('application', "octet-stream")
-    part.set_payload(open(filepath, "rb").read())
-    encoders.encode_base64(part)
-    part.add_header('Content-Disposition', f'attachment; filename="{os.path.basename(filepath)}"')
-    msg.attach(part)
-
-    smtpObj = smtplib.SMTP('smtp.gmail.com', 587)
-    smtpObj.starttls()
-    smtpObj.login(EMAIL_LOGIN, EMAIL_PASSWORD)
-    smtpObj.sendmail(EMAIL_LOGIN, destination_email, msg.as_string())
-    smtpObj.quit()
-
-
 async def get_email_for_sending(message: types.Message):
     await SendingMail.email.set()
     await message.answer("Пожалуйста, напишите e-mail для отправки файла: ")
@@ -210,12 +176,20 @@ async def get_receipts(message: types.Message, state: FSMContext):
     await state.finish()
 
     driver = DBDriver()
-    json = driver.get_receipts()
-    excel_filepath = json_to_excel(json)
-    try:
-        send_email(user_data["email"], excel_filepath)
-        await message.answer("Вложение отправлено получателю. Необходимо проверить e-mail")
-    except Exception:
+    status = driver.add_email_for_sending(user_data["email"])
+    if status == STATUS_FAIL:
         await message.answer("Ой, как же больно! Что-то сломалось внутри меня.")
-
-    os.remove(excel_filepath)
+    else:
+        if status == STATUS_OK:
+            await message.answer("E-mail добавлен в базу")
+        elif status == STATUS_MAIL_ALREADY_EXIST:
+            await message.answer("E-mail уже есть в базе")
+        mail = driver.get_email_for_sending(user_data["email"])
+        json = driver.get_receipts()
+        excel_filepath = json_to_excel(json)
+        status = send_email(mail, excel_filepath)
+        if status == STATUS_OK:
+            await message.answer("Вложение отправлено получателю. Необходимо проверить e-mail")
+        else:
+            await message.answer("Сбой отправки сообщения")
+        os.remove(excel_filepath)

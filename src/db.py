@@ -14,7 +14,7 @@ STATUS_OK = 0
 STATUS_RECEIPT_UNKNOWN_USER = 1
 STATUS_RECEIPT_ALREADY_EXIST = 2
 STATUS_USER_ALREADY_EXIST = 3
-
+STATUS_MAIL_ALREADY_EXIST = 4
 STATUS_FAIL = 10
 
 
@@ -43,6 +43,14 @@ class Receipt(Base):
     tg_id = Column(String)
     create_dt = Column(DateTime(timezone=True), server_default=func.now())
     update_dt = Column(DateTime(timezone=True), onupdate=func.now())
+
+
+class MailList(Base):
+    __tablename__ = 'maillist'
+    id = Column(Integer, primary_key=True)
+    status = Column(String)
+    text = Column(String)
+    create_dt = Column(DateTime(timezone=True), server_default=func.now())
 
 
 class DBDriver:
@@ -74,7 +82,7 @@ class DBDriver:
 
     def __del__(self):
         pass
-        #self._session.close()
+        # self._session.close()
 
     def add_user(self, user: dict):
         session = self._sm()
@@ -161,3 +169,31 @@ class DBDriver:
             json["data"].append(element)
         return json
 
+    def add_email_for_sending(self, mail: str):
+        session = self._sm()
+        c = session.query(MailList.id).filter(MailList.text == mail).count()
+        if c > 0:
+            return STATUS_MAIL_ALREADY_EXIST
+
+        new_mail = MailList(
+            text=mail,
+            status="active",
+        )
+        session.add(new_mail)
+        session.commit()
+        session.refresh(new_mail)
+        id = new_mail.id
+        session.close()
+
+        if id is not None:
+            return STATUS_OK
+        else:
+            return STATUS_FAIL
+
+    def get_email_for_sending(self, mail: str):
+        session = self._sm()
+        data = session.query(MailList).filter(MailList.text == mail).one()
+        if data:
+            return data.text
+        else:
+            return None
