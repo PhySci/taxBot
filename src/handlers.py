@@ -28,14 +28,22 @@ class SendingMail(StatesGroup):
 instance = CallbackData("button", "action")
 
 
-def get_keyboard():
+def get_keyboard(user_tg_id):
     keyboard = types.InlineKeyboardMarkup(row_width=1)
-    buttons = [
-        types.InlineKeyboardButton(text="Зарегистрироваться", callback_data=instance.new(action="registrate")),
-        types.InlineKeyboardButton(text="Доп. информация", callback_data=instance.new(action="info")),
-        types.InlineKeyboardButton(text="Отменить регистрацию", callback_data=instance.new(action="cancel")),
-    ]
-    keyboard.add(*buttons)
+    driver = DBDriver()
+    user_tg_id_from_db = driver.get_user(user_tg_id)
+    if user_tg_id == user_tg_id_from_db:
+        buttons = [
+            types.InlineKeyboardButton(text="Доп. информация", callback_data=instance.new(action="info")),
+        ]
+        keyboard.add(*buttons)
+    else:
+        buttons = [
+            types.InlineKeyboardButton(text="Зарегистрироваться", callback_data=instance.new(action="registrate")),
+            types.InlineKeyboardButton(text="Доп. информация", callback_data=instance.new(action="info")),
+            types.InlineKeyboardButton(text="Отменить регистрацию", callback_data=instance.new(action="cancel")),
+        ]
+        keyboard.add(*buttons)
     return keyboard
 
 
@@ -43,7 +51,7 @@ async def cmd_start(message: types.Message):
     await message.answer("Добро полажловать в TaxBot!"
                          " Нажмите кнопку или введите команду"
                          " (посмотреть можно введя /help) ",
-                         reply_markup=get_keyboard())
+                         reply_markup=get_keyboard(message.from_user.id))
 
 
 async def from_button(call: types.CallbackQuery, callback_data: dict, state: FSMContext):

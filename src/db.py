@@ -113,6 +113,14 @@ class DBDriver:
         else:
             return STATUS_FAIL
 
+    def get_user(self, user_id: int):
+        session = self._sm()
+        user = session.query(User).filter(User.tg_id == user_id).one()
+        if user:
+            return user.tg_id
+        else:
+            return None
+
     def add_receipt(self, receipt: dict):
         """
 
