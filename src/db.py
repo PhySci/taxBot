@@ -87,7 +87,10 @@ class DBDriver:
         session = self._sm()
         c = session.query(User.id).filter(User.tg_id == user["tg_id"]).count()
         if c > 0:
-            _logger.warning("User already exists in database. STATUS_USER_ALREADY_EXIST")
+            _logger.warning(
+                f"User '{user['first_name']} {user['patronymic_name']} {user['last_name']}' with "
+                f"telegram id '{user['tg_id']}' already exists in database. STATUS_USER_ALREADY_EXIST"
+            )
             return STATUS_USER_ALREADY_EXIST
         new_user = User(
             tg_id=int(user['tg_id']),
@@ -105,10 +108,16 @@ class DBDriver:
         id = new_user.id
         session.close()
         if id is not None:
-            _logger.warning("User has been added successfully. STATUS_OK")
+            _logger.info(
+                f"User '{user['first_name']} {user['patronymic_name']} {user['last_name']}' "
+                f"with telegram id '{user['tg_id']}' has been added successfully. STATUS_OK"
+            )
             return STATUS_OK
         else:
-            _logger.warning("User has not been added. STATUS_FAIL")
+            _logger.error(
+                f"User '{user['first_name']} {user['patronymic_name']} {user['last_name']}' "
+                f"with telegram id '{user['tg_id']}' has not been added. STATUS_FAIL"
+            )
             return STATUS_FAIL
 
     def is_user_exist(self, user_id: int):
@@ -127,11 +136,14 @@ class DBDriver:
         session = self._sm()
         user_id = session.query(User.id).filter(User.tg_id == receipt["tg_id"]).first()
         if user_id is None:
-            _logger.warning("User is not found. STATUS_RECEIPT_UNKNOWN_USER")
+            _logger.warning(f"User with id '{user_id}' is not found. STATUS_RECEIPT_UNKNOWN_USER")
             return STATUS_RECEIPT_UNKNOWN_USER
         user_id = user_id[0]
         if session.query(Receipt.id).filter(Receipt.text == receipt["text"]).count() > 0:
-            _logger.warning("Receipt already exists in database. STATUS_RECEIPT_ALREADY_EXIST")
+            _logger.warning(
+                f"Receipt with text '{receipt['text']}' already "
+                f"exists in database. STATUS_RECEIPT_ALREADY_EXIST"
+            )
             return STATUS_RECEIPT_ALREADY_EXIST
         receipt = Receipt(**receipt)
         receipt.user_id = user_id
@@ -142,10 +154,10 @@ class DBDriver:
         id = receipt.id
         session.close()
         if id is not None:
-            _logger.warning("Receipt has been added successfully. STATUS_OK")
+            _logger.warning(f"Receipt with id '{id}' has been added successfully. STATUS_OK")
             return STATUS_OK
         else:
-            _logger.warning("Receipt has not been added. STATUS_FAIL")
+            _logger.error(f"Receipt with text {receipt['text']} has not been added. STATUS_FAIL")
             return STATUS_FAIL
 
     def get_receipts(self):
@@ -177,7 +189,7 @@ class DBDriver:
         session = self._sm()
         c = session.query(MailList.id).filter(MailList.email == email).count()
         if c > 0:
-            _logger.warning("E-mail already exists in database. STATUS_MAIL_ALREADY_EXIST")
+            _logger.warning(f"E-mail {email} already exists in database. STATUS_MAIL_ALREADY_EXIST")
             return STATUS_MAIL_ALREADY_EXIST
         new_email = MailList(
             email=email,
@@ -189,10 +201,10 @@ class DBDriver:
         id = new_email.id
         session.close()
         if id is not None:
-            _logger.error("E-mail has been added successfully. STATUS_OK")
+            _logger.info(f"E-mail {email} has been added successfully. STATUS_OK")
             return STATUS_OK
         else:
-            _logger.error("E-mail has not been added. STATUS_FAIL")
+            _logger.error(f"E-mail {email} has not been added. STATUS_FAIL")
             return STATUS_FAIL
 
     def get_email_list_for_sending(self):
@@ -200,3 +212,5 @@ class DBDriver:
         data = session.query(MailList.email).all()
         if data:
             return [''.join(x) for x in data]
+        else:
+            return None
