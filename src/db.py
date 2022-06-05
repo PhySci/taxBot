@@ -74,6 +74,7 @@ class DBDriver:
             session.query(Receipt).delete()
         except Exception as err:
             print(repr(err))
+
         try:
             Base.metadata.create_all(self._engine)
         except Exception as err:
@@ -85,6 +86,7 @@ class DBDriver:
 
     def add_user(self, user: dict):
         session = self._sm()
+
         c = session.query(User.id).filter(User.tg_id == user["tg_id"]).count()
         if c > 0:
             _logger.warning(
@@ -92,6 +94,7 @@ class DBDriver:
                 f"telegram id '{user['tg_id']}' already exists in database. STATUS_USER_ALREADY_EXIST"
             )
             return STATUS_USER_ALREADY_EXIST
+
         new_user = User(
             tg_id=int(user['tg_id']),
             first_name=user['first_name'],
@@ -102,11 +105,13 @@ class DBDriver:
             role="user",
             use_reminder=False
         )
+
         session.add(new_user)
         session.commit()
         session.refresh(new_user)
         id = new_user.id
         session.close()
+
         if id is not None:
             _logger.info(
                 f"User '{user['first_name']} {user['patronymic_name']} {user['last_name']}' "
@@ -130,6 +135,7 @@ class DBDriver:
 
     def add_receipt(self, receipt: dict):
         """
+
         :param receipt: {"user_id": int, "text": str}
         :return:
         """
