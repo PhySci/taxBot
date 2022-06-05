@@ -1,9 +1,15 @@
 import re
+
 from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.utils.callback_data import CallbackData
-from db import DBDriver, STATUS_OK, STATUS_RECEIPT_ALREADY_EXIST, STATUS_USER_ALREADY_EXIST, STATUS_RECEIPT_UNKNOWN_USER
+
+from db import (
+    DBDriver, STATUS_OK, STATUS_FAIL, STATUS_RECEIPT_ALREADY_EXIST,
+    STATUS_USER_ALREADY_EXIST, STATUS_RECEIPT_UNKNOWN_USER, STATUS_MAIL_ALREADY_EXIST
+)
+from src.mailing import execute_mailing
 
 
 class UserInput(StatesGroup):
@@ -14,17 +20,28 @@ class UserInput(StatesGroup):
     tg_id = State()
 
 
+class SendingMail(StatesGroup):
+    email = State()
+
+
 instance = CallbackData("button", "action")
 
 
-def get_keyboard():
+def get_keyboard(user_tg_id):
     keyboard = types.InlineKeyboardMarkup(row_width=1)
-    buttons = [
-        types.InlineKeyboardButton(text="Зарегистрироваться", callback_data=instance.new(action="registrate")),
-        types.InlineKeyboardButton(text="Доп. информация", callback_data=instance.new(action="info")),
-        types.InlineKeyboardButton(text="Отменить регистрацию", callback_data=instance.new(action="cancel")),
-    ]
-    keyboard.add(*buttons)
+    driver = DBDriver()
+    if driver.is_user_exist(user_tg_id):
+        buttons = [
+            types.InlineKeyboardButton(text="Доп. информация", callback_data=instance.new(action="info")),
+        ]
+        keyboard.add(*buttons)
+    else:
+        buttons = [
+            types.InlineKeyboardButton(text="Зарегистрироваться", callback_data=instance.new(action="registrate")),
+            types.InlineKeyboardButton(text="Доп. информация", callback_data=instance.new(action="info")),
+            types.InlineKeyboardButton(text="Отменить регистрацию", callback_data=instance.new(action="cancel")),
+        ]
+        keyboard.add(*buttons)
     return keyboard
 
 
@@ -32,17 +49,15 @@ async def cmd_start(message: types.Message):
     await message.answer("Добро полажловать в TaxBot!"
                          " Нажмите кнопку или введите команду"
                          " (посмотреть можно введя /help) ",
-                         reply_markup=get_keyboard())
+                         reply_markup=get_keyboard(message.from_user.id))
 
 
 async def from_button(call: types.CallbackQuery, callback_data: dict, state: FSMContext):
     if callback_data["action"] == "registrate":
         await UserInput.first_name.set()
         await call.message.answer("Введите ваше ИМЯ: ")
-
     elif callback_data["action"] == "info":
         await call.message.answer("Тут будет дополнительная информация")
-
     elif callback_data["action"] == "cancel":
         current_state = await state.get_state()
         if current_state is None:
@@ -113,22 +128,22 @@ async def user_input_email(message: types.Message, state: FSMContext):
 async def cmd_cancel(message: types.Message, state: FSMContext):
     current_state = await state.get_state()
     if current_state is None:
-        await message.reply("Нечего отменять")
+        await message.answer("Нечего отменять")
     else:
         await state.finish()
-        await message.reply("Действие отменено")
+        await message.answer("Действие отменено")
 
 
 async def catch_other_message(message: types.Message):
-    await message.reply("Неизвестный тип сообщений. Воспользуйся командой /help")
+    await message.answer("Неизвестный тип сообщений. Воспользуйся командой /help")
 
 
 async def additional_info(message: types.Message):
-    await message.reply("Тут будет дополнительная информация")
+    await message.answer("Тут будет дополнительная информация")
 
 
 async def get_help_command(message: types.Message):
-    await message.reply(
+    await message.answer(
         "* Чтобы зарегистрироваться, введите команду /registration\n"
         "* Чтобы получить дополнительную информацию, введите команду /add_info\n"
         "* Чтобы отменить ввод, введите команду /cancel или напишите 'отмена'\n"
@@ -150,6 +165,32 @@ async def catch_receipt(message: types.Message):
         await message.answer("Ой, как же больно! Что-то сломалось внутри меня.")
 
 
-async def get_receipts(message: types.Message):
+async def set_state_email_for_sending(message: types.Message):
+    await SendingMail.email.set()
+    await message.answer("Пожалуйста, напишите e-mail для отправки файла: ")
+
+
+async def add_email_for_sending(message: types.Message, state: FSMContext):
+    pattern = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+    if re.match(pattern, message.text) is None:
+        await message.answer("Пожалуйста, напишите e-mail в формате user@example.com")
+        return
+    await state.update_data(email=message.text)
+    user_data = await state.get_data()
+    await state.finish()
     driver = DBDriver()
-    json = driver.get_receipts()
+    status = driver.add_email_for_sending(user_data["email"])
+    if status == STATUS_OK:
+        await message.answer("E-mail добавлен в базу")
+    elif status == STATUS_MAIL_ALREADY_EXIST:
+        await message.answer("E-mail уже есть в базе")
+    elif status == STATUS_FAIL:
+        await message.answer("Ой, как же больно! Что-то сломалось внутри меня.")
+
+
+async def send_email_for_subscribers(message: types.Message):
+    status = execute_mailing()
+    if status == STATUS_OK:
+        await message.answer("Вложение отправлено получателю. Необходимо проверить e-mail")
+    else:
+        await message.answer("Сбой отправки сообщения")
