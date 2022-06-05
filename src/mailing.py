@@ -57,3 +57,10 @@ def execute_mailing():
         except smtplib.SMTPException:
             _logger.error("E-mail has not been sent. STATUS_FAIL")
             return STATUS_FAIL
+
+
+def execute_mailing_in_chat():
+    driver = DBDriver()
+    json_data = driver.get_receipts()
+    excel_filepath = json_to_excel(json_data)
+    return excel_filepath

@@ -1,3 +1,4 @@
+import os
 import re
 
 from aiogram import types
@@ -9,7 +10,7 @@ from db import (
     DBDriver, STATUS_OK, STATUS_FAIL, STATUS_RECEIPT_ALREADY_EXIST,
     STATUS_USER_ALREADY_EXIST, STATUS_RECEIPT_UNKNOWN_USER, STATUS_MAIL_ALREADY_EXIST
 )
-from src.mailing import execute_mailing
+from src.mailing import execute_mailing, execute_mailing_in_chat
 
 
 class UserInput(StatesGroup):
@@ -189,8 +190,13 @@ async def add_email_for_sending(message: types.Message, state: FSMContext):
 
 
 async def send_email_for_subscribers(message: types.Message):
-    status = execute_mailing()
-    if status == STATUS_OK:
-        await message.answer("Вложение отправлено получателю. Необходимо проверить e-mail")
-    else:
-        await message.answer("Сбой отправки сообщения")
+    path = execute_mailing_in_chat()
+    with open(path, 'rb') as excel:
+        await message.reply_document(excel)
+        os.remove(path)
+
+    # status = execute_mailing()
+    # if status == STATUS_OK:
+    #     await message.answer("Вложение отправлено получателю. Необходимо проверить e-mail")
+    # else:
+    #     await message.answer("Сбой отправки сообщения")
