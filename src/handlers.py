@@ -1,4 +1,3 @@
-import os
 import re
 
 from aiogram import types
@@ -10,7 +9,7 @@ from db import (
     DBDriver, STATUS_OK, STATUS_FAIL, STATUS_RECEIPT_ALREADY_EXIST,
     STATUS_USER_ALREADY_EXIST, STATUS_RECEIPT_UNKNOWN_USER, STATUS_MAIL_ALREADY_EXIST
 )
-from src.mailing import json_to_excel, send_email
+from src.mailing import execute_mailing
 
 
 class UserInput(StatesGroup):
@@ -31,8 +30,7 @@ instance = CallbackData("button", "action")
 def get_keyboard(user_tg_id):
     keyboard = types.InlineKeyboardMarkup(row_width=1)
     driver = DBDriver()
-    user_tg_id_from_db = driver.get_user(user_tg_id)
-    if user_tg_id == user_tg_id_from_db:
+    if driver.is_user_exist(user_tg_id):
         buttons = [
             types.InlineKeyboardButton(text="Доп. информация", callback_data=instance.new(action="info")),
         ]
@@ -58,10 +56,8 @@ async def from_button(call: types.CallbackQuery, callback_data: dict, state: FSM
     if callback_data["action"] == "registrate":
         await UserInput.first_name.set()
         await call.message.answer("Введите ваше ИМЯ: ")
-
     elif callback_data["action"] == "info":
         await call.message.answer("Тут будет дополнительная информация")
-
     elif callback_data["action"] == "cancel":
         current_state = await state.get_state()
         if current_state is None:
@@ -169,12 +165,12 @@ async def catch_receipt(message: types.Message):
         await message.answer("Ой, как же больно! Что-то сломалось внутри меня.")
 
 
-async def get_email_for_sending(message: types.Message):
+async def set_state_email_for_sending(message: types.Message):
     await SendingMail.email.set()
     await message.answer("Пожалуйста, напишите e-mail для отправки файла: ")
 
 
-async def get_receipts(message: types.Message, state: FSMContext):
+async def add_email_for_sending(message: types.Message, state: FSMContext):
     pattern = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
     if re.match(pattern, message.text) is None:
         await message.answer("Пожалуйста, напишите e-mail в формате user@example.com")
@@ -182,22 +178,19 @@ async def get_receipts(message: types.Message, state: FSMContext):
     await state.update_data(email=message.text)
     user_data = await state.get_data()
     await state.finish()
-
     driver = DBDriver()
     status = driver.add_email_for_sending(user_data["email"])
-    if status == STATUS_FAIL:
+    if status == STATUS_OK:
+        await message.answer("E-mail добавлен в базу")
+    elif status == STATUS_MAIL_ALREADY_EXIST:
+        await message.answer("E-mail уже есть в базе")
+    elif status == STATUS_FAIL:
         await message.answer("Ой, как же больно! Что-то сломалось внутри меня.")
+
+
+async def send_email_for_subscribers(message: types.Message):
+    status = execute_mailing()
+    if status == STATUS_OK:
+        await message.answer("Вложение отправлено получателю. Необходимо проверить e-mail")
     else:
-        if status == STATUS_OK:
-            await message.answer("E-mail добавлен в базу")
-        elif status == STATUS_MAIL_ALREADY_EXIST:
-            await message.answer("E-mail уже есть в базе")
-        mail = driver.get_email_for_sending(user_data["email"])
-        json = driver.get_receipts()
-        excel_filepath = json_to_excel(json)
-        status = send_email(mail, excel_filepath)
-        if status == STATUS_OK:
-            await message.answer("Вложение отправлено получателю. Необходимо проверить e-mail")
-        else:
-            await message.answer("Сбой отправки сообщения")
-        os.remove(excel_filepath)
+        await message.answer("Сбой отправки сообщения")

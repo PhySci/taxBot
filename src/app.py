@@ -60,8 +60,9 @@ def main():
         handlers.catch_receipt,
         regexp="https:\/\/lknpd.nalog.ru/api/v1/receipt/\d+/[\w]+/print"
     )
-    dp.register_message_handler(handlers.get_email_for_sending, commands="receipts")
-    dp.register_message_handler(handlers.get_receipts, state=handlers.SendingMail.email)
+    dp.register_message_handler(handlers.set_state_email_for_sending, commands="add_subscriber")
+    dp.register_message_handler(handlers.add_email_for_sending, state=handlers.SendingMail.email)
+    dp.register_message_handler(handlers.send_email_for_subscribers, commands="send_receipts")
 
     dp.register_callback_query_handler(
         handlers.from_button,

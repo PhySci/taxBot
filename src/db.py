@@ -49,7 +49,7 @@ class MailList(Base):
     __tablename__ = 'maillist'
     id = Column(Integer, primary_key=True)
     status = Column(String)
-    text = Column(String)
+    email = Column(String)
     create_dt = Column(DateTime(timezone=True), server_default=func.now())
 
 
@@ -74,7 +74,6 @@ class DBDriver:
             session.query(Receipt).delete()
         except Exception as err:
             print(repr(err))
-
         try:
             Base.metadata.create_all(self._engine)
         except Exception as err:
@@ -86,11 +85,10 @@ class DBDriver:
 
     def add_user(self, user: dict):
         session = self._sm()
-
         c = session.query(User.id).filter(User.tg_id == user["tg_id"]).count()
         if c > 0:
+            _logger.warning("User already exists in database. STATUS_USER_ALREADY_EXIST")
             return STATUS_USER_ALREADY_EXIST
-
         new_user = User(
             tg_id=int(user['tg_id']),
             first_name=user['first_name'],
@@ -101,55 +99,53 @@ class DBDriver:
             role="user",
             use_reminder=False
         )
-
         session.add(new_user)
         session.commit()
         session.refresh(new_user)
         id = new_user.id
         session.close()
-
         if id is not None:
+            _logger.warning("User has been added successfully. STATUS_OK")
             return STATUS_OK
         else:
+            _logger.warning("User has not been added. STATUS_FAIL")
             return STATUS_FAIL
 
-    def get_user(self, user_id: int):
+    def is_user_exist(self, user_id: int):
         session = self._sm()
         user = session.query(User).filter(User.tg_id == user_id).one()
-        if user:
-            return user.tg_id
+        if user.tg_id:
+            return True
         else:
-            return None
+            return False
 
     def add_receipt(self, receipt: dict):
         """
-
         :param receipt: {"user_id": int, "text": str}
         :return:
         """
         session = self._sm()
-
         user_id = session.query(User.id).filter(User.tg_id == receipt["tg_id"]).first()
         if user_id is None:
+            _logger.warning("User is not found. STATUS_RECEIPT_UNKNOWN_USER")
             return STATUS_RECEIPT_UNKNOWN_USER
         user_id = user_id[0]
-
         if session.query(Receipt.id).filter(Receipt.text == receipt["text"]).count() > 0:
+            _logger.warning("Receipt already exists in database. STATUS_RECEIPT_ALREADY_EXIST")
             return STATUS_RECEIPT_ALREADY_EXIST
-
         receipt = Receipt(**receipt)
         receipt.user_id = user_id
         receipt.status = "active"
         session.add(receipt)
         session.commit()
-
         session.refresh(receipt)
         id = receipt.id
         session.close()
-
         if id is not None:
+            _logger.warning("Receipt has been added successfully. STATUS_OK")
             return STATUS_OK
         else:
+            _logger.warning("Receipt has not been added. STATUS_FAIL")
             return STATUS_FAIL
 
     def get_receipts(self):
@@ -177,31 +173,30 @@ class DBDriver:
             json["data"].append(element)
         return json
 
-    def add_email_for_sending(self, mail: str):
+    def add_email_for_sending(self, email: str):
         session = self._sm()
-        c = session.query(MailList.id).filter(MailList.text == mail).count()
+        c = session.query(MailList.id).filter(MailList.email == email).count()
         if c > 0:
+            _logger.warning("E-mail already exists in database. STATUS_MAIL_ALREADY_EXIST")
             return STATUS_MAIL_ALREADY_EXIST
-
-        new_mail = MailList(
-            text=mail,
+        new_email = MailList(
+            email=email,
             status="active",
         )
-        session.add(new_mail)
+        session.add(new_email)
         session.commit()
-        session.refresh(new_mail)
-        id = new_mail.id
+        session.refresh(new_email)
+        id = new_email.id
         session.close()
-
         if id is not None:
+            _logger.error("E-mail has been added successfully. STATUS_OK")
             return STATUS_OK
         else:
+            _logger.error("E-mail has not been added. STATUS_FAIL")
             return STATUS_FAIL
 
-    def get_email_for_sending(self, mail: str):
+    def get_email_list_for_sending(self):
         session = self._sm()
-        data = session.query(MailList).filter(MailList.text == mail).one()
+        data = session.query(MailList.email).all()
         if data:
-            return data.text
-        else:
-            return None
+            return [''.join(x) for x in data]
