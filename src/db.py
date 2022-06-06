@@ -166,9 +166,14 @@ class DBDriver:
             _logger.error(f"Receipt with text {receipt['text']} has not been added. STATUS_FAIL")
             return STATUS_FAIL
 
-    def get_receipts(self):
+    def get_receipts(self) -> dict:
+        """
+        Returns JSON with all receipts
+
+        :return:
+        """
         session = self._sm()
-        json = {"data": []}
+        res = {"data": []}
         data = session.query(
             User.first_name,
             User.patronymic_name,
@@ -188,8 +193,8 @@ class DBDriver:
             except AttributeError as error:
                 element["update_dt"] = None
                 _logger.exception(error)
-            json["data"].append(element)
-        return json
+            res["data"].append(element)
+        return res
 
     def add_email_for_sending(self, email: str):
         session = self._sm()

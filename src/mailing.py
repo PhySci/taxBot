@@ -47,13 +47,12 @@ def execute_mailing():
         msg.attach(part)
         os.remove(excel_filepath)
         try:
-            smtpObj = smtplib.SMTP('smtp.gmail.com', 587)
-            smtpObj.starttls()
-            smtpObj.login(EMAIL_LOGIN, EMAIL_PASSWORD)
-            smtpObj.sendmail(EMAIL_LOGIN, msg['To'], msg.as_string())
-            smtpObj.quit()
+            server = smtplib.SMTP_SSL(host="smtp.yandex.ru", port=465, timeout=5)
+            server.login(EMAIL_LOGIN, EMAIL_PASSWORD)
+            server.sendmail(EMAIL_LOGIN, msg['To'], msg.as_string())
+            server.quit()
             _logger.info("E-mail has been sent successfully. STATUS_OK")
             return STATUS_OK
-        except smtplib.SMTPException:
-            _logger.error("E-mail has not been sent. STATUS_FAIL")
+        except smtplib.SMTPException as e:
+            _logger.error("E-mail has not been sent: %s", repr(e))
             return STATUS_FAIL
