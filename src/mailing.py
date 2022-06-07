@@ -16,9 +16,15 @@ _logger = logging.getLogger(__name__)
 
 
 def json_to_excel(json_data):
-    clear_data = json_data["data"]
-    json_loader = Json2Excel(head_name_cols=["create_dt", "update_dt"])
-    return json_loader.run(clear_data)
+    clear_data = []
+    for el in json_data["data"]:
+        clear_data.append({"ФИО": " ".join([el.get("last_name", ""), el.get("first_name", ""), el.get("patronymic_name", "")]),
+                           "Дата получения": el.get("create_dt", ""),
+                           "Чек": el.get("text", "")})
+    json_loader = Json2Excel(head_name_cols=["ФИО", "Дата получения", "Чек"])
+    file_pth = json_loader.run(clear_data)
+    _logger.info("Excel file is created at %s", file_pth)
+    return file_pth
 
 
 def execute_mailing():
@@ -34,7 +40,7 @@ def execute_mailing():
         json_data = driver.get_receipts()
         excel_filepath = json_to_excel(json_data)
         msg = MIMEMultipart()
-        msg['Subject'] = "Mailing list from the taxBot according to your request (EXCEL file)"
+        msg['Subject'] = "Mailing list from the TaxBot according to your request (EXCEL file)"
         msg['From'] = EMAIL_LOGIN
         msg['To'] = ', '.join(email_list)
         body = "This is an automated email"
