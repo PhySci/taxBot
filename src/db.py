@@ -127,8 +127,7 @@ class DBDriver:
 
     def is_user_exist(self, user_id: int):
         session = self._sm()
-        user = session.query(User).filter(User.tg_id == user_id).one()
-        if user.tg_id:
+        if session.query(User).filter(User.tg_id == user_id).count():
             return True
         else:
             return False

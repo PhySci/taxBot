@@ -23,7 +23,6 @@ class TestDB(TestCase):
                 "email": "test@ya.ru"}
         d.add_user(user)
 
-
     def test_init(self):
         try:
             DBDriver()
