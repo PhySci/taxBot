@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from db import DBDriver, STATUS_OK, STATUS_RECEIPT_UNKNOWN_USER, STATUS_USER_ALREADY_EXIST, STATUS_RECEIPT_ALREADY_EXIST
 import random
 
-conf_pth = os.path.join(os.path.dirname(__file__), 'env')
+conf_pth = os.path.join(os.path.dirname(__file__), '.env')
 load_dotenv(dotenv_path=conf_pth)
 
 
