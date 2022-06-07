@@ -14,7 +14,8 @@ STATUS_OK = 0
 STATUS_RECEIPT_UNKNOWN_USER = 1
 STATUS_RECEIPT_ALREADY_EXIST = 2
 STATUS_USER_ALREADY_EXIST = 3
-STATUS_MAIL_ALREADY_EXIST = 4
+STATUS_USER_ALREADY_DEACTIVATED = 4
+STATUS_MAIL_ALREADY_EXIST = 5
 STATUS_FAIL = 10
 
 
@@ -124,6 +125,31 @@ class DBDriver:
                 f"with telegram id '{user['tg_id']}' has not been added. STATUS_FAIL"
             )
             return STATUS_FAIL
+
+    def deactivate_user(self, user: dict):
+        session = self._sm()
+        db_user = session.query(User).filter(User.tg_id == user["tg_id"])
+        if db_user.count() == 0:
+            _logger.error(
+                f"User '{user['first_name']} {user['patronymic_name']} {user['last_name']}' with "
+                f"telegram id '{user['tg_id']}' does not exists in database. STATUS_FAIL"
+            )
+            return STATUS_FAIL
+
+        user = db_user.one()
+        user.status = "deactive"
+        session.commit()
+        status = user.status
+        session.close()
+        if status == "deactive":
+            _logger.info(f"Status of user with id '{user.id}' has been changed to 'deactive'. STATUS_OK")
+            return STATUS_OK
+        elif status == "activate":
+            _logger.warning(
+                f"Status of user with id '{user.id}' is already 'deactive'. "
+                f"STATUS_USER_ALREADY_DEACTIVATED"
+            )
+            return STATUS_USER_ALREADY_DEACTIVATED
 
     def is_user_exist(self, user_id: int):
         session = self._sm()
