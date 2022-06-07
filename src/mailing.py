@@ -16,9 +16,15 @@ _logger = logging.getLogger(__name__)
 
 
 def json_to_excel(json_data):
-    clear_data = json_data["data"]
-    json_loader = Json2Excel(head_name_cols=["create_dt", "update_dt"])
-    return json_loader.run(clear_data)
+    clear_data = []
+    for el in json_data["data"]:
+        clear_data.append({"ФИО": " ".join([el.get("last_name", ""), el.get("first_name", ""), el.get("patronymic_name", "")]),
+                           "Дата получения": el.get("create_dt", ""),
+                           "Чек": el.get("text", "")})
+    json_loader = Json2Excel(head_name_cols=["ФИО", "Дата получения", "Чек"])
+    file_pth = json_loader.run(clear_data)
+    _logger.info("Excel file is created at %s", file_pth)
+    return file_pth
 
 
 def execute_mailing():
@@ -34,7 +40,7 @@ def execute_mailing():
         json_data = driver.get_receipts()
         excel_filepath = json_to_excel(json_data)
         msg = MIMEMultipart()
-        msg['Subject'] = "Mailing list from the taxBot according to your request (EXCEL file)"
+        msg['Subject'] = "Mailing list from the TaxBot according to your request (EXCEL file)"
         msg['From'] = EMAIL_LOGIN
         msg['To'] = ', '.join(email_list)
         body = "This is an automated email"
@@ -47,15 +53,14 @@ def execute_mailing():
         msg.attach(part)
         os.remove(excel_filepath)
         try:
-            smtpObj = smtplib.SMTP('smtp.gmail.com', 587)
-            smtpObj.starttls()
-            smtpObj.login(EMAIL_LOGIN, EMAIL_PASSWORD)
-            smtpObj.sendmail(EMAIL_LOGIN, msg['To'], msg.as_string())
-            smtpObj.quit()
+            server = smtplib.SMTP_SSL(host="smtp.yandex.ru", port=465, timeout=5)
+            server.login(EMAIL_LOGIN, EMAIL_PASSWORD)
+            server.sendmail(EMAIL_LOGIN, msg['To'], msg.as_string())
+            server.quit()
             _logger.info("E-mail has been sent successfully. STATUS_OK")
             return STATUS_OK
-        except smtplib.SMTPException:
-            _logger.error("E-mail has not been sent. STATUS_FAIL")
+        except smtplib.SMTPException as e:
+            _logger.error("E-mail has not been sent: %s", repr(e))
             return STATUS_FAIL
 
 
