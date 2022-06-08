@@ -78,3 +78,5 @@ LOCAL_DEV = os.getenv('LOCAL_DEV')
 # Variables for e-mail sending
 EMAIL_LOGIN = os.getenv('EMAIL_LOGIN')
 EMAIL_PASSWORD = os.getenv('EMAIL_PASSWORD')
+SMTP_SERVER = os.getenv('SMTP_SERVER')
+SMTP_PORT = os.getenv('SMTP_PORT')
