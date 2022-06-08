@@ -70,8 +70,9 @@ class DBDriver:
     def reinit(self):
         session = self._sm()
         try:
-            session.query(User).delete()
             session.query(Receipt).delete()
+            session.query(User).delete()
+            session.commit()
         except Exception as err:
             print(repr(err))
 
@@ -127,8 +128,7 @@ class DBDriver:
 
     def is_user_exist(self, user_id: int):
         session = self._sm()
-        user = session.query(User).filter(User.tg_id == user_id).one()
-        if user.tg_id:
+        if session.query(User).filter(User.tg_id == user_id).count():
             return True
         else:
             return False
@@ -190,9 +190,8 @@ class DBDriver:
                 _logger.exception(error)
             try:
                 element["update_dt"] = element["update_dt"].strftime("%d-%m-%Y")
-            except AttributeError as error:
+            except AttributeError:
                 element["update_dt"] = None
-                _logger.exception(error)
             res["data"].append(element)
         return res
 
