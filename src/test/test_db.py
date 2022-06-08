@@ -44,13 +44,15 @@ class TestDB(TestCase):
         d = DBDriver()
         user_id = random.randint(10, 1e7)
         user = {"tg_id": user_id,
-                    "first_name": "Иван",
-                    "last_name": "Иванов",
-                    "patronymic_name": "Петрович",
+                    "first_name": "Сергей",
+                    "last_name": "Александрович",
+                    "patronymic_name": "Родищев",
                     "email": "test@ya.ru"}
-        # self.assertEqual(d.deactivate_user(user), STATUS_OK)
         self.assertEqual(d.deactivate_user(user), STATUS_FAIL)
-        # self.assertEqual(d.deactivate_user(user), STATUS_USER_ALREADY_DEACTIVATED)
+
+        d.add_user(user)
+        self.assertEqual(d.deactivate_user(user), STATUS_OK)
+        self.assertEqual(d.deactivate_user(user), STATUS_USER_ALREADY_DEACTIVATED)
 
     def test_add_receipt(self):
         d = DBDriver()
@@ -60,6 +62,7 @@ class TestDB(TestCase):
                        "text": text}
         self.assertEqual(d.add_receipt(new_receipt), STATUS_OK)
         self.assertEqual(d.add_receipt(new_receipt), STATUS_RECEIPT_ALREADY_EXIST)
+
 
     def test_add_receipt_unknown_user(self):
         d = DBDriver()

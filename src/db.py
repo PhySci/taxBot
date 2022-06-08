@@ -137,6 +137,14 @@ class DBDriver:
             return STATUS_FAIL
 
         user = db_user.one()
+
+        if user.status == "deactive":
+            _logger.warning(
+                f"Status of user with id '{user.id}' is already 'deactive'. "
+                f"STATUS_USER_ALREADY_DEACTIVATED"
+            )
+            return STATUS_USER_ALREADY_DEACTIVATED
+
         user.status = "deactive"
         session.commit()
         status = user.status
@@ -144,12 +152,7 @@ class DBDriver:
         if status == "deactive":
             _logger.info(f"Status of user with id '{user.id}' has been changed to 'deactive'. STATUS_OK")
             return STATUS_OK
-        elif status == "activate":
-            _logger.warning(
-                f"Status of user with id '{user.id}' is already 'deactive'. "
-                f"STATUS_USER_ALREADY_DEACTIVATED"
-            )
-            return STATUS_USER_ALREADY_DEACTIVATED
+
 
     def is_user_exist(self, user_id: int):
         session = self._sm()
