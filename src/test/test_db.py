@@ -2,8 +2,10 @@ import os
 import unittest
 from unittest import TestCase
 from dotenv import load_dotenv
-from db import DBDriver, STATUS_OK, STATUS_RECEIPT_UNKNOWN_USER, STATUS_USER_ALREADY_EXIST, STATUS_RECEIPT_ALREADY_EXIST
+from src.db import DBDriver, STATUS_OK, STATUS_RECEIPT_UNKNOWN_USER, \
+    STATUS_USER_ALREADY_EXIST, STATUS_RECEIPT_ALREADY_EXIST, STATUS_USER_ALREADY_DEACTIVATED, STATUS_FAIL
 import random
+
 
 conf_pth = os.path.join(os.path.dirname(__file__), '.env')
 load_dotenv(dotenv_path=conf_pth)
@@ -40,6 +42,20 @@ class TestDB(TestCase):
         self.assertEqual(d.add_user(user), STATUS_OK)
         self.assertEqual(d.add_user(user), STATUS_USER_ALREADY_EXIST)
 
+    def test_deactivate_user(self):
+        d = DBDriver()
+        user_id = random.randint(10, 1e7)
+        user = {"tg_id": user_id,
+                    "first_name": "Сергей",
+                    "last_name": "Александрович",
+                    "patronymic_name": "Родищев",
+                    "email": "test@ya.ru"}
+        self.assertEqual(d.deactivate_user(user), STATUS_FAIL)
+
+        d.add_user(user)
+        self.assertEqual(d.deactivate_user(user), STATUS_OK)
+        self.assertEqual(d.deactivate_user(user), STATUS_USER_ALREADY_DEACTIVATED)
+
     def test_add_receipt(self):
         d = DBDriver()
 
@@ -48,6 +64,7 @@ class TestDB(TestCase):
                        "text": text}
         self.assertEqual(d.add_receipt(new_receipt), STATUS_OK)
         self.assertEqual(d.add_receipt(new_receipt), STATUS_RECEIPT_ALREADY_EXIST)
+
 
     def test_add_receipt_unknown_user(self):
         d = DBDriver()
