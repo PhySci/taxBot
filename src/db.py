@@ -71,8 +71,9 @@ class DBDriver:
     def reinit(self):
         session = self._sm()
         try:
-            session.query(User).delete()
             session.query(Receipt).delete()
+            session.query(User).delete()
+            session.commit()
         except Exception as err:
             print(repr(err))
 
@@ -156,8 +157,7 @@ class DBDriver:
 
     def is_user_exist(self, user_id: int):
         session = self._sm()
-        user = session.query(User).filter(User.tg_id == user_id).one()
-        if user.tg_id:
+        if session.query(User).filter(User.tg_id == user_id).count():
             return True
         else:
             return False
@@ -195,9 +195,14 @@ class DBDriver:
             _logger.error(f"Receipt with text {receipt['text']} has not been added. STATUS_FAIL")
             return STATUS_FAIL
 
-    def get_receipts(self):
+    def get_receipts(self) -> dict:
+        """
+        Returns JSON with all receipts
+
+        :return:
+        """
         session = self._sm()
-        json = {"data": []}
+        res = {"data": []}
         data = session.query(
             User.first_name,
             User.patronymic_name,
@@ -214,11 +219,10 @@ class DBDriver:
                 _logger.exception(error)
             try:
                 element["update_dt"] = element["update_dt"].strftime("%d-%m-%Y")
-            except AttributeError as error:
+            except AttributeError:
                 element["update_dt"] = None
-                _logger.exception(error)
-            json["data"].append(element)
-        return json
+            res["data"].append(element)
+        return res
 
     def add_email_for_sending(self, email: str):
         session = self._sm()
