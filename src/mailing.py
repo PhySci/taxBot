@@ -1,13 +1,16 @@
+import datetime
 import logging
 import os
+from datetime import  datetime
 import smtplib
+
 
 from email import encoders
 from email.mime.base import MIMEBase
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
-from json2excel import Json2Excel
+import xlsxwriter
 
 from settings import EMAIL_LOGIN, EMAIL_PASSWORD
 from src.db import STATUS_OK, STATUS_FAIL, DBDriver
@@ -15,15 +18,35 @@ from src.db import STATUS_OK, STATUS_FAIL, DBDriver
 _logger = logging.getLogger(__name__)
 
 
-def json_to_excel(json_data):
+def json_to_excel(json_data: dict) -> str:
+    """
+    Formats the input data and saves as Excel file
+
+    :param json_data:
+    :return:
+    """
+    file_pth = os.path.join(os.path.dirname(__file__), "tmp", datetime.now().strftime("%Y-%m-%d_%H-%M-%S")+".xlsx")
+    workbook = xlsxwriter.Workbook(file_pth)
+    worksheet = workbook.add_worksheet()
+
     clear_data = []
+
     for el in json_data["data"]:
-        clear_data.append({"ФИО": " ".join([el.get("last_name", ""), el.get("first_name", ""), el.get("patronymic_name", "")]),
-                           "Дата получения": el.get("create_dt", ""),
-                           "Чек": el.get("text", "")})
-    json_loader = Json2Excel(head_name_cols=["ФИО", "Дата получения", "Чек"])
-    file_pth = json_loader.run(clear_data)
-    _logger.info("Excel file is created at %s", file_pth)
+        clear_data.append({"FIO": " ".join([el.get("last_name", ""), el.get("first_name", ""), el.get("patronymic_name", "")]),
+                           "Date": el.get("create_dt", ""),
+                           "Receipt": el.get("text", "")})
+
+    headers = ["ФИО", "Дата получения", "Чек"]
+
+    for col, h in enumerate(headers):
+        worksheet.write(0, col, h)
+
+    for row, el in enumerate(clear_data):
+        worksheet.write(row+1, 0, el["FIO"])
+        worksheet.write(row+1, 1, el["Date"])
+        worksheet.write(row+1, 2, el["Receipt"])
+
+    workbook.close()
     return file_pth
 
 
