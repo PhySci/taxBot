@@ -12,7 +12,7 @@ from email.mime.multipart import MIMEMultipart
 
 import xlsxwriter
 
-from settings import EMAIL_LOGIN, EMAIL_PASSWORD
+from settings import EMAIL_LOGIN, EMAIL_PASSWORD, SMTP_SERVER, SMTP_PORT
 from src.db import STATUS_OK, STATUS_FAIL, DBDriver
 
 _logger = logging.getLogger(__name__)
@@ -76,7 +76,7 @@ def execute_mailing():
         msg.attach(part)
         os.remove(excel_filepath)
         try:
-            server = smtplib.SMTP_SSL(host="smtp.yandex.ru", port=465, timeout=5)
+            server = smtplib.SMTP_SSL(host=SMTP_SERVER, port=SMTP_PORT, timeout=5)
             server.login(EMAIL_LOGIN, EMAIL_PASSWORD)
             server.sendmail(EMAIL_LOGIN, msg['To'], msg.as_string())
             server.quit()
