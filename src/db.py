@@ -62,7 +62,7 @@ class Sendings(Base):
     period_start_dt = Column(DateTime(timezone=True))
     period_end_dt = Column(DateTime(timezone=True))
     n_receipts = Column(Integer, nullable=True)
-    status = Column(String, nullable=False)
+    status = Column(Integer, nullable=False)
 
 
 class DBDriver:
@@ -275,9 +275,11 @@ class DBDriver:
         """
         session = self._sm()
 
-        q = session.query(func.max(Sendings.period_end_dt)).filter(Sendings.status == "ok").one()
+        q = session.query(func.max(Sendings.period_end_dt)).one() #.filter(Sendings.status == 0).one()
         if q[0] is None:
             start_date = datetime.datetime(2020, 1, 1)
+        else:
+            start_date = q[0] + datetime.timedelta(microseconds=1)
         end_date = datetime.datetime.now() - datetime.timedelta(days=1)
         end_date = datetime.datetime.combine(end_date.date(), datetime.time(23, 59, 59, 999999))
         return start_date, end_date
