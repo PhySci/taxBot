@@ -4,8 +4,9 @@ import unittest
 from unittest import TestCase
 from dotenv import load_dotenv
 from src.db import DBDriver, STATUS_OK, STATUS_RECEIPT_UNKNOWN_USER, \
-    STATUS_USER_ALREADY_EXIST, STATUS_RECEIPT_ALREADY_EXIST
+    STATUS_USER_ALREADY_EXIST, STATUS_RECEIPT_ALREADY_EXIST, STATUS_USER_ALREADY_DEACTIVATED, STATUS_FAIL
 import random
+
 
 conf_pth = os.path.join(os.path.dirname(__file__), '.env')
 load_dotenv(dotenv_path=conf_pth)
@@ -24,7 +25,6 @@ class TestDB(TestCase):
                 "patronymic_name": "Петрович",
                 "email": "test@ya.ru"}
         d.add_user(user)
-
 
     def test_init(self):
         try:
@@ -92,6 +92,11 @@ class TestDB(TestCase):
         x = d.get_receipts(start_date=start_date, end_date=end_date)
         self.assertEqual(x['data'][0]['create_dt'], result['data'][0]['create_dt'].strftime("%d-%m-%Y"))
         self.assertEqual(x['data'][0]['text'], result['data'][0]['text'])
+
+
+    def test_get_period(self):
+        driver = DBDriver()
+        r = driver.get_period()
 
 
 if __name__ == "__main__":

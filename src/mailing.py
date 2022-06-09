@@ -1,7 +1,7 @@
 import datetime
 import logging
 import os
-from datetime import  datetime
+from datetime import datetime
 import smtplib
 
 
@@ -32,59 +32,69 @@ def json_to_excel(json_data: dict) -> str:
     clear_data = []
 
     for el in json_data["data"]:
-        clear_data.append({"FIO": " ".join([el.get("last_name", ""), el.get("first_name", ""), el.get("patronymic_name", "")]),
+        clear_data.append({"FIO": " ".join([el.get("last_name", ""),
+                                            el.get("first_name", ""),
+                                            el.get("patronymic_name", "")]),
+                           "Email": el.get("email"),
                            "Date": el.get("create_dt", ""),
                            "Receipt": el.get("text", "")})
 
-    headers = ["ФИО", "Дата получения", "Чек"]
+    headers = ["ФИО", "e-mail", "Дата получения", "Чек"]
 
     for col, h in enumerate(headers):
         worksheet.write(0, col, h)
 
     for row, el in enumerate(clear_data):
         worksheet.write(row+1, 0, el["FIO"])
-        worksheet.write(row+1, 1, el["Date"])
-        worksheet.write(row+1, 2, el["Receipt"])
+        worksheet.write(row+1, 1, el["Email"])
+        worksheet.write(row+1, 2, el["Date"])
+        worksheet.write(row+1, 3, el["Receipt"])
 
     workbook.close()
     return file_pth
 
 
-def execute_mailing():
+def send_email(email_list: list, excel_filepath: str) -> int:
+    msg = MIMEMultipart()
+    msg['Subject'] = "Mailing list from the TaxBot according to your request (EXCEL file)"
+    msg['From'] = EMAIL_LOGIN
+    msg['To'] = ', '.join(email_list)
+    body = "This is an automated email"
+    msg.attach(MIMEText(body, 'plain'))
+    part = MIMEBase('application', "octet-stream")
+    with open(excel_filepath, "rb") as file:
+        part.set_payload(file.read())
+    encoders.encode_base64(part)
+    part.add_header('Content-Disposition', f'attachment; filename="{os.path.basename(excel_filepath)}"')
+    msg.attach(part)
+    os.remove(excel_filepath)
+    try:
+        server = smtplib.SMTP_SSL(host=SMTP_SERVER, port=SMTP_PORT, timeout=5)
+        server.login(EMAIL_LOGIN, EMAIL_PASSWORD)
+        server.sendmail(EMAIL_LOGIN, msg['To'], msg.as_string())
+        server.quit()
+        _logger.info("E-mail has been sent successfully. STATUS_OK")
+        return STATUS_OK
+    except smtplib.SMTPException as e:
+        _logger.error("E-mail has not been sent: %s", repr(e))
+        return STATUS_FAIL
+
+
+def main():
     driver = DBDriver()
     email_list = driver.get_email_list_for_sending()
-    if email_list is None:
+
+    if len(email_list) == 0:
         _logger.error("E-mail list is empty. Check records in database")
-        raise TypeError(
-            "Variable 'email_list' has type None, but must be of type 'list'. "
-            "This error possibly related with database"
-        )
-    else:
-        json_data = driver.get_receipts()
-        excel_filepath = json_to_excel(json_data)
-        msg = MIMEMultipart()
-        msg['Subject'] = "Mailing list from the TaxBot according to your request (EXCEL file)"
-        msg['From'] = EMAIL_LOGIN
-        msg['To'] = ', '.join(email_list)
-        body = "This is an automated email"
-        msg.attach(MIMEText(body, 'plain'))
-        part = MIMEBase('application', "octet-stream")
-        with open(excel_filepath, "rb") as file:
-            part.set_payload(file.read())
-        encoders.encode_base64(part)
-        part.add_header('Content-Disposition', f'attachment; filename="{os.path.basename(excel_filepath)}"')
-        msg.attach(part)
-        os.remove(excel_filepath)
-        try:
-            server = smtplib.SMTP_SSL(host=SMTP_SERVER, port=SMTP_PORT, timeout=5)
-            server.login(EMAIL_LOGIN, EMAIL_PASSWORD)
-            server.sendmail(EMAIL_LOGIN, msg['To'], msg.as_string())
-            server.quit()
-            _logger.info("E-mail has been sent successfully. STATUS_OK")
-            return STATUS_OK
-        except smtplib.SMTPException as e:
-            _logger.error("E-mail has not been sent: %s", repr(e))
-            return STATUS_FAIL
+        return STATUS_FAIL
+
+    period_start_date, period_end_date = driver.get_period()
+
+    receipts = driver.get_receipts(period_start_date, period_end_date)
+    excel_filepath = json_to_excel(receipts)
+    status = send_email(email_list, excel_filepath)
+
+    driver.save_period(period_start_date, period_end_date, len(receipts["data"]), status)
 
 
 def execute_mailing_in_chat():
@@ -92,3 +102,8 @@ def execute_mailing_in_chat():
     json_data = driver.get_receipts()
     excel_filepath = json_to_excel(json_data)
     return excel_filepath
+
+
+if __name__ == "__main__":
+    #@TODO: argparse input arguments if they are
+    main()
