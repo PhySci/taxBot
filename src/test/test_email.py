@@ -5,7 +5,8 @@ import os
 conf_pth = os.path.join(os.path.dirname(__file__), ".env")
 load_dotenv(conf_pth, )
 
-from mailing import execute_mailing, json_to_excel
+from mailing import json_to_excel
+from mailing import main as execute_mailing
 from db import DBDriver
 
 

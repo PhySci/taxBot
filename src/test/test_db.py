@@ -65,7 +65,6 @@ class TestDB(TestCase):
         self.assertEqual(d.add_receipt(new_receipt), STATUS_OK)
         self.assertEqual(d.add_receipt(new_receipt), STATUS_RECEIPT_ALREADY_EXIST)
 
-
     def test_add_receipt_unknown_user(self):
         d = DBDriver()
         text = "https://lknpd.nalog.ru/api/v1/receipt/" + str(random.randint(0, 1e7)) + "/123abcdfsdf/print"
@@ -73,6 +72,10 @@ class TestDB(TestCase):
                    "text": text}
         status = d.add_receipt(receipt)
         self.assertEqual(status, STATUS_RECEIPT_UNKNOWN_USER)
+
+    def test_get_period(self):
+        driver = DBDriver()
+        r = driver.get_period()
 
 
 if __name__ == "__main__":

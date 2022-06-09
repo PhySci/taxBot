@@ -1,3 +1,4 @@
+import datetime
 import logging
 import os
 
@@ -36,7 +37,7 @@ class User(Base):
 
 
 class Receipt(Base):
-    __tablename__ = 'receipt'
+    __tablename__ = "receipt"
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("user.id"))
     status = Column(String)
@@ -47,11 +48,21 @@ class Receipt(Base):
 
 
 class MailList(Base):
-    __tablename__ = 'maillist'
+    __tablename__ = "maillist"
     id = Column(Integer, primary_key=True)
     status = Column(String)
     email = Column(String)
     create_dt = Column(DateTime(timezone=True), server_default=func.now())
+
+
+class Sendings(Base):
+    __tablename__ = "sendings"
+    id = Column(Integer, primary_key=True)
+    send_dt = Column(DateTime(timezone=True))
+    period_start_dt = Column(DateTime(timezone=True))
+    period_end_dt = Column(DateTime(timezone=True))
+    n_receipts = Column(Integer, nullable=True)
+    status = Column(String, nullable=False)
 
 
 class DBDriver:
@@ -154,7 +165,6 @@ class DBDriver:
             _logger.info(f"Status of user with id '{user.id}' has been changed to 'deactive'. STATUS_OK")
             return STATUS_OK
 
-
     def is_user_exist(self, user_id: int):
         session = self._sm()
         if session.query(User).filter(User.tg_id == user_id).count():
@@ -171,15 +181,14 @@ class DBDriver:
         session = self._sm()
         user_id = session.query(User.id).filter(User.tg_id == receipt["tg_id"]).first()
         if user_id is None:
-            _logger.warning(f"User with id '{user_id}' is not found. STATUS_RECEIPT_UNKNOWN_USER")
+            _logger.warning("User with id %d is not found.", user_id)
             return STATUS_RECEIPT_UNKNOWN_USER
+
         user_id = user_id[0]
         if session.query(Receipt.id).filter(Receipt.text == receipt["text"]).count() > 0:
-            _logger.warning(
-                f"Receipt with text '{receipt['text']}' already "
-                f"exists in database. STATUS_RECEIPT_ALREADY_EXIST"
-            )
+            _logger.warning("Receipt %s already exists in database.", {receipt['text']})
             return STATUS_RECEIPT_ALREADY_EXIST
+
         receipt = Receipt(**receipt)
         receipt.user_id = user_id
         receipt.status = "active"
@@ -189,10 +198,10 @@ class DBDriver:
         id = receipt.id
         session.close()
         if id is not None:
-            _logger.warning(f"Receipt with id '{id}' has been added successfully. STATUS_OK")
+            _logger.warning("Receipt with id %id has been added successfully.", id)
             return STATUS_OK
         else:
-            _logger.error(f"Receipt with text {receipt['text']} has not been added. STATUS_FAIL")
+            _logger.error("Receipt with text %s has not been added.", receipt['text'])
             return STATUS_FAIL
 
     def get_receipts(self) -> dict:
@@ -207,6 +216,7 @@ class DBDriver:
             User.first_name,
             User.patronymic_name,
             User.last_name,
+            User.email,
             Receipt.text,
             Receipt.create_dt,
             Receipt.update_dt).filter(User.id == Receipt.user_id).all()
@@ -252,4 +262,28 @@ class DBDriver:
         if data:
             return [''.join(x) for x in data]
         else:
-            return None
+            return []
+
+    def get_period(self):
+        """
+        Calculates start and ending of new period which has not been sent.
+
+        :return:
+        """
+        session = self._sm()
+
+        q = session.query(func.max(Sendings.period_end_dt)).filter(Sendings.status == "ok").one()
+        if q[0] is None:
+            start_date = datetime.datetime(2020, 1, 1)
+        end_date = datetime.datetime.now() - datetime.timedelta(days=1)
+        end_date = datetime.datetime.combine(end_date.date(), datetime.time(23, 59, 59, 999999))
+        return start_date, end_date
+
+    def save_period(self, send_dt, start_date, end_date, n_receipts=0, status="ok"):
+        session = self._sm()
+        period = Sendings(send_dt=send_dt, period_start_dt=start_date, period_end_dt=end_date,
+                          n_receipts=n_receipts, status=status)
+
+        session.add(period)
+        session.commit()
+        session.close()
