@@ -1,7 +1,7 @@
 import logging
 import os
 
-from sqlalchemy import Column, String, Integer, ForeignKey, create_engine, DateTime, Boolean
+from sqlalchemy import Column, String, Integer, ForeignKey, create_engine, DateTime, Boolean, and_
 from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.sql import func
@@ -195,7 +195,7 @@ class DBDriver:
             _logger.error(f"Receipt with text {receipt['text']} has not been added. STATUS_FAIL")
             return STATUS_FAIL
 
-    def get_receipts(self) -> dict:
+    def get_receipts(self, start_date=None, end_date=None) -> dict:
         """
         Returns JSON with all receipts
 
@@ -209,18 +209,14 @@ class DBDriver:
             User.last_name,
             Receipt.text,
             Receipt.create_dt,
-            Receipt.update_dt).filter(User.id == Receipt.user_id).all()
+            Receipt.update_dt).filter(User.id == Receipt.user_id).\
+            filter(and_(Receipt.create_dt > start_date, Receipt.create_dt <= end_date))
         for element in data:
             element = element._asdict()
-            try:
+            if element["create_dt"] is not None:
                 element["create_dt"] = element["create_dt"].strftime("%d-%m-%Y")
-            except AttributeError as error:
-                element["create_dt"] = None
-                _logger.exception(error)
-            try:
+            if element["update_dt"] is not None:
                 element["update_dt"] = element["update_dt"].strftime("%d-%m-%Y")
-            except AttributeError:
-                element["update_dt"] = None
             res["data"].append(element)
         return res
 
