@@ -84,7 +84,7 @@ class TestDB(TestCase):
                 [{
                     'tg_id': 1,
                     'text': f'https://example.link/api/v1/receipt/{random.randint(0, int(1e7))}/print',
-                    'create_dt': datetime.datetime.now() + datetime.timedelta(minutes=1),
+                    'create_dt': datetime.datetime.now() - datetime.timedelta(minutes=1),
                     'update_dt': None
                 }]
         }
@@ -93,10 +93,10 @@ class TestDB(TestCase):
         self.assertEqual(x['data'][0]['create_dt'], result['data'][0]['create_dt'].strftime("%d-%m-%Y"))
         self.assertEqual(x['data'][0]['text'], result['data'][0]['text'])
 
-
     def test_get_period(self):
         driver = DBDriver()
         r = driver.get_period()
+        print(r)
 
 
 if __name__ == "__main__":

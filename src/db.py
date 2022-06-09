@@ -181,7 +181,7 @@ class DBDriver:
         session = self._sm()
         user_id = session.query(User.id).filter(User.tg_id == receipt["tg_id"]).first()
         if user_id is None:
-            _logger.warning("User with id %d is not found.", user_id)
+            _logger.warning("User with id %s is not found.", repr(user_id))
             return STATUS_RECEIPT_UNKNOWN_USER
 
         user_id = user_id[0]
@@ -212,16 +212,23 @@ class DBDriver:
         """
         session = self._sm()
         res = {"data": []}
-        data = session.query(
+        query = session.query(
             User.first_name,
             User.patronymic_name,
             User.last_name,
             User.email,
             Receipt.text,
             Receipt.create_dt,
-            Receipt.update_dt).filter(User.id == Receipt.user_id).\
-            filter(and_(Receipt.create_dt > start_date, Receipt.create_dt <= end_date))
-        for element in data:
+            Receipt.update_dt) \
+            .filter(User.id == Receipt.user_id)
+
+        if start_date is not None:
+            query = query.filter(Receipt.create_dt > start_date)
+
+        if end_date is not None:
+            query = query.filter(Receipt.create_dt <= end_date)
+
+        for element in query:
             element = element._asdict()
             if element["create_dt"] is not None:
                 element["create_dt"] = element["create_dt"].strftime("%d-%m-%Y")
