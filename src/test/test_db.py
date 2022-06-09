@@ -1,12 +1,14 @@
+import datetime
 import os
 import unittest
 from unittest import TestCase
 from dotenv import load_dotenv
-from db import DBDriver, STATUS_OK, STATUS_RECEIPT_UNKNOWN_USER, STATUS_USER_ALREADY_EXIST, STATUS_RECEIPT_ALREADY_EXIST
+from src.db import DBDriver, STATUS_OK, STATUS_RECEIPT_UNKNOWN_USER, \
+    STATUS_USER_ALREADY_EXIST, STATUS_RECEIPT_ALREADY_EXIST
 import random
 
-conf_pth = os.path.join(os.path.dirname(__file__), '.env')
-load_dotenv(dotenv_path=conf_pth)
+# conf_pth = os.path.join(os.path.dirname(__file__), '.env')
+load_dotenv()
 
 
 class TestDB(TestCase):
@@ -23,7 +25,6 @@ class TestDB(TestCase):
                 "email": "test@ya.ru"}
         d.add_user(user)
 
-
     def test_init(self):
         try:
             DBDriver()
@@ -32,7 +33,7 @@ class TestDB(TestCase):
 
     def test_add_user(self):
         d = DBDriver()
-        user_id = random.randint(10, 1e7)
+        user_id = random.randint(10, int(1e7))
         user = {"tg_id": user_id,
                     "first_name": "Иван",
                     "last_name": "Иванов",
@@ -44,7 +45,7 @@ class TestDB(TestCase):
     def test_add_receipt(self):
         d = DBDriver()
 
-        text = "https://lknpd.nalog.ru/api/v1/receipt/" + str(random.randint(0, 1e7)) + "/ab123d/print"
+        text = "https://lknpd.nalog.ru/api/v1/receipt/" + str(random.randint(0, int(1e7))) + "/ab123d/print"
         new_receipt = {"tg_id": 1,
                        "text": text}
         self.assertEqual(d.add_receipt(new_receipt), STATUS_OK)
@@ -52,11 +53,29 @@ class TestDB(TestCase):
 
     def test_add_receipt_unknown_user(self):
         d = DBDriver()
-        text = "https://lknpd.nalog.ru/api/v1/receipt/" + str(random.randint(0, 1e7)) + "/123abcdfsdf/print"
+        text = "https://lknpd.nalog.ru/api/v1/receipt/" + str(random.randint(0, int(1e7))) + "/123abcdfsdf/print"
         receipt = {"tg_id": 2,
                    "text": text}
         status = d.add_receipt(receipt)
         self.assertEqual(status, STATUS_RECEIPT_UNKNOWN_USER)
+
+    def test_get_receipts(self):
+        d = DBDriver()
+        start_date = datetime.datetime.now()
+        end_date = datetime.datetime.now() + datetime.timedelta(minutes=2)
+        result = {
+            'data':
+                [{
+                    'tg_id': 1,
+                    'text': f'https://example.link/api/v1/receipt/{random.randint(0, int(1e7))}/print',
+                    'create_dt': datetime.datetime.now() + datetime.timedelta(minutes=1),
+                    'update_dt': None
+                }]
+        }
+        d.add_receipt(result['data'][0])
+        x = d.get_receipts(start_date=start_date, end_date=end_date)
+        self.assertEqual(x['data'][0]['create_dt'], result['data'][0]['create_dt'].strftime("%d-%m-%Y"))
+        self.assertEqual(x['data'][0]['text'], result['data'][0]['text'])
 
 
 if __name__ == "__main__":
