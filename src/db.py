@@ -171,9 +171,26 @@ class DBDriver:
             _logger.info(f"Status of user with id '{user.id}' has been changed to 'deactive'. STATUS_OK")
             return STATUS_OK
 
-    def is_user_exist(self, user_id: int):
+    def is_user_exist(self, user_id: int) -> bool:
+        """
+        Returns True if user is found in the DB
+        :param user_id:
+        :return:
+        """
         session = self._sm()
         if session.query(User).filter(User.tg_id == user_id).count():
+            return True
+        else:
+            return False
+
+    def is_user_admin(self, user_id: int) -> bool:
+        """
+        Returns true if user has admin permission
+        :param user_id:
+        :return:
+        """
+        session = self._sm()
+        if session.query(User.role).filter(User.tg_id == user_id).one()[0] == "admin":
             return True
         else:
             return False

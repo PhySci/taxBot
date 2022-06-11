@@ -10,7 +10,7 @@ from db import (
     DBDriver, STATUS_OK, STATUS_FAIL, STATUS_RECEIPT_ALREADY_EXIST,
     STATUS_USER_ALREADY_EXIST, STATUS_RECEIPT_UNKNOWN_USER, STATUS_MAIL_ALREADY_EXIST
 )
-from src.mailing import execute_mailing, execute_mailing_in_chat
+from src.mailing import main as execute_mailing
 
 
 class UserInput(StatesGroup):
@@ -176,11 +176,16 @@ async def add_email_for_sending(message: types.Message, state: FSMContext):
     if re.match(pattern, message.text) is None:
         await message.answer("Пожалуйста, напишите e-mail в формате user@example.com")
         return
-    await state.update_data(email=message.text)
-    user_data = await state.get_data()
+
     await state.finish()
+
     driver = DBDriver()
-    status = driver.add_email_for_sending(user_data["email"])
+
+    if not driver.is_user_admin(message["from"]["id"]):
+        await message.answer("Вы не являетесь админом этого бота")
+        return
+
+    status = driver.add_email_for_sending(message.text)
     if status == STATUS_OK:
         await message.answer("E-mail добавлен в базу")
     elif status == STATUS_MAIL_ALREADY_EXIST:
@@ -188,9 +193,3 @@ async def add_email_for_sending(message: types.Message, state: FSMContext):
     elif status == STATUS_FAIL:
         await message.answer("Ой, как же больно! Что-то сломалось внутри меня.")
 
-
-async def send_email_for_subscribers(message: types.Message):
-    path = execute_mailing_in_chat()
-    with open(path, 'rb') as excel:
-        await message.reply_document(excel)
-        os.remove(path)

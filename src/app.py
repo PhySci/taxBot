@@ -62,7 +62,6 @@ def main():
     )
     dp.register_message_handler(handlers.set_state_email_for_sending, commands="add_subscriber")
     dp.register_message_handler(handlers.add_email_for_sending, state=handlers.SendingMail.email)
-    dp.register_message_handler(handlers.send_email_for_subscribers, commands="send_receipts")
 
     dp.register_callback_query_handler(
         handlers.from_button,
