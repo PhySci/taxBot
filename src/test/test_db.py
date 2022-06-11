@@ -36,10 +36,10 @@ class TestDB(TestCase):
         d = DBDriver()
         user_id = random.randint(10, int(1e7))
         user = {"tg_id": user_id,
-                    "first_name": "Иван",
-                    "last_name": "Иванов",
-                    "patronymic_name": "Петрович",
-                    "email": "test@ya.ru"}
+                    "first_name": random.choice(["Иван", "Сергей", "Петр", "Аркадий", "Семён"]),
+                    "last_name": random.choice(["Иванов", "Петров", "Углов", "Серов", "Круглов", "Квадратов"]),
+                    "patronymic_name": random.choice(["Петрович", "Сергеич", "Александрович", "Борисович"]),
+                    "email": "test@mail.ru"}
         self.assertEqual(d.add_user(user), STATUS_OK)
         self.assertEqual(d.add_user(user), STATUS_USER_ALREADY_EXIST)
 
@@ -47,10 +47,10 @@ class TestDB(TestCase):
         d = DBDriver()
         user_id = random.randint(10, 1e7)
         user = {"tg_id": user_id,
-                    "first_name": "Сергей",
-                    "last_name": "Александрович",
-                    "patronymic_name": "Родищев",
-                    "email": "test@ya.ru"}
+                "first_name": "Сергей",
+                "last_name": "Александрович",
+                "patronymic_name": "Родищев",
+                "email": "test@ya.ru"}
         self.assertEqual(d.deactivate_user(user), STATUS_FAIL)
 
         d.add_user(user)
@@ -61,7 +61,16 @@ class TestDB(TestCase):
         d = DBDriver()
 
         text = "https://lknpd.nalog.ru/api/v1/receipt/" + str(random.randint(0, int(1e7))) + "/ab123d/print"
-        new_receipt = {"tg_id": 1,
+
+        user_id = random.randint(int(1e5), int(1e7))
+        user = {"tg_id": user_id,
+                    "first_name": random.choice(["Иван", "Сергей", "Петр", "Аркадий", "Семён"]),
+                    "last_name": random.choice(["Иванов", "Петров", "Углов", "Серов", "Круглов", "Квадратов"]),
+                    "patronymic_name": random.choice(["Петрович", "Сергеич", "Александрович", "Борисович"]),
+                    "email": "test@mail.ru"}
+        self.assertEqual(d.add_user(user), STATUS_OK)
+
+        new_receipt = {"tg_id": user_id,
                        "text": text}
         self.assertEqual(d.add_receipt(new_receipt), STATUS_OK)
         self.assertEqual(d.add_receipt(new_receipt), STATUS_RECEIPT_ALREADY_EXIST)
@@ -78,17 +87,17 @@ class TestDB(TestCase):
     def test_get_receipts(self):
         d = DBDriver()
         start_date = datetime.datetime.now()
-        end_date = datetime.datetime.now() + datetime.timedelta(minutes=2)
+        end_date = datetime.datetime.now() + datetime.timedelta(seconds=10)
         result = {
             'data':
                 [{
                     'tg_id': 1,
                     'text': f'https://example.link/api/v1/receipt/{random.randint(0, int(1e7))}/print',
-                    'create_dt': datetime.datetime.now() - datetime.timedelta(minutes=1),
+                    'create_dt': start_date + datetime.timedelta(seconds=5),
                     'update_dt': None
                 }]
         }
-        d.add_receipt(result['data'][0])
+        self.assertEqual(d.add_receipt(result['data'][0]), STATUS_OK)
         x = d.get_receipts(start_date=start_date, end_date=end_date)
         self.assertEqual(x['data'][0]['create_dt'], result['data'][0]['create_dt'].strftime("%d-%m-%Y"))
         self.assertEqual(x['data'][0]['text'], result['data'][0]['text'])

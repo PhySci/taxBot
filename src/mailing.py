@@ -13,7 +13,7 @@ from email.mime.multipart import MIMEMultipart
 import xlsxwriter
 
 from settings import EMAIL_LOGIN, EMAIL_PASSWORD, SMTP_SERVER, SMTP_PORT
-from src.db import STATUS_OK, STATUS_FAIL, DBDriver
+from src.db import STATUS_OK, STATUS_FAIL, DBDriver, SendingStatus
 
 _logger = logging.getLogger(__name__)
 
@@ -54,7 +54,7 @@ def json_to_excel(json_data: dict) -> str:
     return file_pth
 
 
-def send_email(email_list: list, excel_filepath: str) -> int:
+def send_email(email_list: list, excel_filepath: str) -> SendingStatus:
     msg = MIMEMultipart()
     msg['Subject'] = "Mailing list from the TaxBot according to your request (EXCEL file)"
     msg['From'] = EMAIL_LOGIN
@@ -74,10 +74,10 @@ def send_email(email_list: list, excel_filepath: str) -> int:
         server.sendmail(EMAIL_LOGIN, msg['To'], msg.as_string())
         server.quit()
         _logger.info("E-mail has been sent successfully. STATUS_OK")
-        return STATUS_OK
+        return SendingStatus.OK
     except smtplib.SMTPException as e:
         _logger.error("E-mail has not been sent: %s", repr(e))
-        return STATUS_FAIL
+        return SendingStatus.FAILED
 
 
 def main():

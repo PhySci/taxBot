@@ -1,8 +1,9 @@
 import datetime
 import logging
 import os
+import enum
 
-from sqlalchemy import Column, String, Integer, ForeignKey, create_engine, DateTime, Boolean, and_
+from sqlalchemy import Column, String, Integer, ForeignKey, create_engine, DateTime, Boolean, Enum
 from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.sql import func
@@ -55,6 +56,11 @@ class MailList(Base):
     create_dt = Column(DateTime(timezone=True), server_default=func.now())
 
 
+class SendingStatus(enum.Enum):
+    OK = 0
+    FAILED = 1
+
+
 class Sendings(Base):
     __tablename__ = "sendings"
     id = Column(Integer, primary_key=True)
@@ -62,7 +68,7 @@ class Sendings(Base):
     period_start_dt = Column(DateTime(timezone=True))
     period_end_dt = Column(DateTime(timezone=True))
     n_receipts = Column(Integer, nullable=True)
-    status = Column(Integer, nullable=False)
+    status = Column(Enum(SendingStatus))
 
 
 class DBDriver:
@@ -228,7 +234,7 @@ class DBDriver:
         if end_date is not None:
             query = query.filter(Receipt.create_dt <= end_date)
 
-        for element in query:
+        for element in query.all():
             element = element._asdict()
             if element["create_dt"] is not None:
                 element["create_dt"] = element["create_dt"].strftime("%d-%m-%Y")
@@ -275,7 +281,7 @@ class DBDriver:
         """
         session = self._sm()
 
-        q = session.query(func.max(Sendings.period_end_dt)).one() #.filter(Sendings.status == 0).one()
+        q = session.query(func.max(Sendings.period_end_dt)).filter(Sendings.status == SendingStatus.OK).one()
         if q[0] is None:
             start_date = datetime.datetime(2020, 1, 1)
         else:

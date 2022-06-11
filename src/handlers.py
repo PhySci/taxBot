@@ -194,9 +194,3 @@ async def send_email_for_subscribers(message: types.Message):
     with open(path, 'rb') as excel:
         await message.reply_document(excel)
         os.remove(path)
-
-    # status = execute_mailing()
-    # if status == STATUS_OK:
-    #     await message.answer("Вложение отправлено получателю. Необходимо проверить e-mail")
-    # else:
-    #     await message.answer("Сбой отправки сообщения")
