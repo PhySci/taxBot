@@ -10,7 +10,6 @@ from db import (
     DBDriver, STATUS_OK, STATUS_FAIL, STATUS_RECEIPT_ALREADY_EXIST,
     STATUS_USER_ALREADY_EXIST, STATUS_RECEIPT_UNKNOWN_USER, STATUS_MAIL_ALREADY_EXIST
 )
-from src.mailing import main as execute_mailing
 
 
 class UserInput(StatesGroup):
