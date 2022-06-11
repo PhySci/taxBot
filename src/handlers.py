@@ -58,7 +58,8 @@ async def from_button(call: types.CallbackQuery, callback_data: dict, state: FSM
         await UserInput.first_name.set()
         await call.message.answer("Введите ваше ИМЯ: ")
     elif callback_data["action"] == "info":
-        await call.message.answer("Тут будет дополнительная информация")
+        await call.message.answer("Бот помогает сотрудникам Яндекс.Практикума отправлять чеки о получении выплат."
+                                  "Если у тебя возникли трудности с ботом, то напиши @x00dr - он постарается тебе помочь")
     elif callback_data["action"] == "cancel":
         current_state = await state.get_state()
         if current_state is None:
