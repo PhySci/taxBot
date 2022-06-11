@@ -2,14 +2,17 @@ import locale
 import logging
 import handlers
 
+import aiogram
+from aiogram.types import BotCommand
 from aiogram import Bot, executor
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.contrib.middlewares.logging import LoggingMiddleware
 from aiogram.dispatcher import Dispatcher
 from aiogram.utils.executor import start_webhook
 from aiogram.dispatcher.filters import Text
+
 from settings import BOT_TOKEN, WEBHOOK_URL, WEBHOOK_PATH, WEBHOOK_HOST, WEBAPP_HOST, WEBAPP_PORT, LOCAL_DEV
-from utils import setup_logging, set_default_commands
+from utils import setup_logging
 
 try:
     locale.setlocale(locale.LC_TIME, 'ru_RU.UTF-8')
@@ -17,6 +20,7 @@ except:
     locale.setlocale(locale.LC_ALL, 'ru_RU.UTF-8')
 
 _logger = logging.getLogger(__name__)
+logging.getLogger("aiogram").setLevel(logging.INFO)
 
 
 def init_bot():
@@ -27,6 +31,16 @@ def init_bot():
 
 
 bot, dp = init_bot()
+
+
+async def set_default_commands(dp):
+    await dp.bot.set_my_commands([
+        BotCommand("start", "Запуск"),
+        BotCommand("help", "Помощь"),
+        BotCommand("registration", "Зарегистрироваться"),
+        BotCommand("add_info", "Доп. информация"),
+        BotCommand("cancel", "Отменить текущее действие")
+    ])
 
 
 async def on_startup():

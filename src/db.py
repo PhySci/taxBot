@@ -195,36 +195,40 @@ class DBDriver:
         else:
             return False
 
-    def add_receipt(self, receipt: dict):
+    def add_receipt(self, receipt_data: dict):
         """
 
         :param receipt: {"user_id": int, "text": str}
         :return:
         """
         session = self._sm()
-        user_id = session.query(User.id).filter(User.tg_id == receipt["tg_id"]).first()
+        user_id = session.query(User.id) \
+                         .filter(User.tg_id == receipt_data["tg_id"]) \
+                         .filter(User.status == "active") \
+                         .first()
+
         if user_id is None:
-            _logger.warning("User with id %s is not found.", repr(user_id))
+            _logger.warning("User with Tg ID %s is not found.", repr(receipt_data["tg_id"]))
             return STATUS_RECEIPT_UNKNOWN_USER
 
         user_id = user_id[0]
-        if session.query(Receipt.id).filter(Receipt.text == receipt["text"]).count() > 0:
-            _logger.warning("Receipt %s already exists in database.", {receipt['text']})
+        if session.query(Receipt.id).filter(Receipt.text == receipt_data["text"]).count() > 0:
+            _logger.warning("Receipt %s already exists in database. User ID is %d", receipt_data['text'], user_id)
             return STATUS_RECEIPT_ALREADY_EXIST
 
-        receipt = Receipt(**receipt)
-        receipt.user_id = user_id
-        receipt.status = "active"
+        receipt_data.update({"user_id": user_id,
+                             "status": "active"})
+        receipt = Receipt(**receipt_data)
         session.add(receipt)
         session.commit()
         session.refresh(receipt)
         id = receipt.id
         session.close()
         if id is not None:
-            _logger.warning("Receipt with id %id has been added successfully.", id)
+            _logger.info("Receipt with id %d has been added successfully.", id)
             return STATUS_OK
         else:
-            _logger.error("Receipt with text %s has not been added.", receipt['text'])
+            _logger.error("Receipt with text %s has not been added. User ID is %d", receipt['text'], user_id)
             return STATUS_FAIL
 
     def get_receipts(self, start_date=None, end_date=None) -> dict:
