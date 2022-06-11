@@ -13,7 +13,7 @@ from email.mime.multipart import MIMEMultipart
 import xlsxwriter
 
 from settings import EMAIL_LOGIN, EMAIL_PASSWORD, SMTP_SERVER, SMTP_PORT
-from src.db import STATUS_OK, STATUS_FAIL, DBDriver, SendingStatus
+from db import STATUS_OK, STATUS_FAIL, DBDriver, SendingStatus
 
 _logger = logging.getLogger(__name__)
 
