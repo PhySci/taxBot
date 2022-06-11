@@ -13,7 +13,8 @@ from email.mime.multipart import MIMEMultipart
 import xlsxwriter
 
 from settings import EMAIL_LOGIN, EMAIL_PASSWORD, SMTP_SERVER, SMTP_PORT
-from src.db import STATUS_OK, STATUS_FAIL, DBDriver, SendingStatus
+from db import STATUS_OK, STATUS_FAIL, DBDriver, SendingStatus
+from utils import setup_logging
 
 _logger = logging.getLogger(__name__)
 
@@ -106,4 +107,5 @@ def execute_mailing_in_chat():
 
 if __name__ == "__main__":
     #@TODO: argparse input arguments if they are
+    setup_logging()
     main()

@@ -21,7 +21,7 @@ def setup_logging(logfile=None, loglevel='DEBUG'):
           '%(funcName)s(): %(lineno)d: %(message)s'
     formatter = logging.Formatter(fmt)
 
-    fh = TimedRotatingFileHandler(filename=logfile, when="D", interval=1, encoding='utf-8')
+    fh = TimedRotatingFileHandler(filename=logfile, when="D", interval=1, encoding="utf-8")
     fh.setLevel(loglevel)
     fh.setFormatter(formatter)
 
