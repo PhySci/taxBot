@@ -1,15 +1,18 @@
 import logging
+from logging.handlers import TimedRotatingFileHandler
+import os
 
-from aiogram.types import BotCommand
 
-
-def setup_logging(logfile='log.txt', loglevel='DEBUG'):
+def setup_logging(logfile=None, loglevel='DEBUG'):
     """
 
     :param logfile:
     :param loglevel:
     :return:
     """
+    if logfile is None:
+        logfile = os.path.join(os.path.dirname(__file__), "logs/taxbot")
+
     loglevel = getattr(logging, loglevel)
 
     logger = logging.getLogger()
@@ -18,7 +21,7 @@ def setup_logging(logfile='log.txt', loglevel='DEBUG'):
           '%(funcName)s(): %(lineno)d: %(message)s'
     formatter = logging.Formatter(fmt)
 
-    fh = logging.FileHandler(logfile, encoding='utf-8')
+    fh = TimedRotatingFileHandler(filename=logfile, when="D", interval=1, encoding='utf-8')
     fh.setLevel(loglevel)
     fh.setFormatter(formatter)
 
@@ -30,11 +33,3 @@ def setup_logging(logfile='log.txt', loglevel='DEBUG'):
     logger.addHandler(ch)
 
 
-async def set_default_commands(dp):
-    await dp.bot.set_my_commands([
-        BotCommand("start", "Запуск"),
-        BotCommand("help", "Помощь"),
-        BotCommand("registration", "Зарегистрироваться"),
-        BotCommand("add_info", "Доп. информация"),
-        BotCommand("cancel", "Отменить текущее действие")
-    ])

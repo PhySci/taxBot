@@ -1,8 +1,9 @@
 import datetime
 import logging
 import os
+import enum
 
-from sqlalchemy import Column, String, Integer, ForeignKey, create_engine, DateTime, Boolean, and_
+from sqlalchemy import Column, String, Integer, ForeignKey, create_engine, DateTime, Boolean, Enum
 from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.sql import func
@@ -55,6 +56,11 @@ class MailList(Base):
     create_dt = Column(DateTime(timezone=True), server_default=func.now())
 
 
+class SendingStatus(enum.Enum):
+    OK = 0
+    FAILED = 1
+
+
 class Sendings(Base):
     __tablename__ = "sendings"
     id = Column(Integer, primary_key=True)
@@ -62,7 +68,7 @@ class Sendings(Base):
     period_start_dt = Column(DateTime(timezone=True))
     period_end_dt = Column(DateTime(timezone=True))
     n_receipts = Column(Integer, nullable=True)
-    status = Column(Integer, nullable=False)
+    status = Column(Enum(SendingStatus))
 
 
 class DBDriver:
@@ -165,43 +171,64 @@ class DBDriver:
             _logger.info(f"Status of user with id '{user.id}' has been changed to 'deactive'. STATUS_OK")
             return STATUS_OK
 
-    def is_user_exist(self, user_id: int):
+    def is_user_exist(self, user_id: int) -> bool:
+        """
+        Returns True if user is found in the DB
+        :param user_id:
+        :return:
+        """
         session = self._sm()
         if session.query(User).filter(User.tg_id == user_id).count():
             return True
         else:
             return False
 
-    def add_receipt(self, receipt: dict):
+    def is_user_admin(self, user_id: int) -> bool:
+        """
+        Returns true if user has admin permission
+        :param user_id:
+        :return:
+        """
+        session = self._sm()
+        if session.query(User.role).filter(User.tg_id == user_id).one()[0] == "admin":
+            return True
+        else:
+            return False
+
+    def add_receipt(self, receipt_data: dict):
         """
 
         :param receipt: {"user_id": int, "text": str}
         :return:
         """
         session = self._sm()
-        user_id = session.query(User.id).filter(User.tg_id == receipt["tg_id"]).first()
+        user_id = session.query(User.id) \
+                         .filter(User.tg_id == receipt_data["tg_id"]) \
+                         .filter(User.status == "active") \
+                         .first()
+
         if user_id is None:
-            _logger.warning("User with id %s is not found.", repr(user_id))
+            _logger.warning("User with Tg ID %s is not found.", repr(receipt_data["tg_id"]))
             return STATUS_RECEIPT_UNKNOWN_USER
 
         user_id = user_id[0]
-        if session.query(Receipt.id).filter(Receipt.text == receipt["text"]).count() > 0:
-            _logger.warning("Receipt %s already exists in database.", {receipt['text']})
+        if session.query(Receipt.id).filter(Receipt.text == receipt_data["text"]).count() > 0:
+            _logger.warning("Receipt %s already exists in database. User ID is %d", receipt_data['text'], user_id)
             return STATUS_RECEIPT_ALREADY_EXIST
 
-        receipt = Receipt(**receipt)
-        receipt.user_id = user_id
-        receipt.status = "active"
+        receipt_data.update({"user_id": user_id,
+                             "status": "active"})
+        receipt = Receipt(**receipt_data)
         session.add(receipt)
         session.commit()
         session.refresh(receipt)
         id = receipt.id
         session.close()
         if id is not None:
-            _logger.warning("Receipt with id %id has been added successfully.", id)
+            _logger.info("Receipt with id %d has been added successfully.", id)
             return STATUS_OK
         else:
-            _logger.error("Receipt with text %s has not been added.", receipt['text'])
+            _logger.error("Receipt with text %s has not been added. User ID is %d", receipt['text'], user_id)
             return STATUS_FAIL
 
     def get_receipts(self, start_date=None, end_date=None) -> dict:
@@ -228,7 +255,7 @@ class DBDriver:
         if end_date is not None:
             query = query.filter(Receipt.create_dt <= end_date)
 
-        for element in query:
+        for element in query.all():
             element = element._asdict()
             if element["create_dt"] is not None:
                 element["create_dt"] = element["create_dt"].strftime("%d-%m-%Y")
@@ -275,7 +302,7 @@ class DBDriver:
         """
         session = self._sm()
 
-        q = session.query(func.max(Sendings.period_end_dt)).one() #.filter(Sendings.status == 0).one()
+        q = session.query(func.max(Sendings.period_end_dt)).filter(Sendings.status == SendingStatus.OK).one()
         if q[0] is None:
             start_date = datetime.datetime(2020, 1, 1)
         else:
