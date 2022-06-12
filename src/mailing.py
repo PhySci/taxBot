@@ -4,7 +4,6 @@ import os
 from datetime import datetime
 import smtplib
 
-
 from email import encoders
 from email.mime.base import MIMEBase
 from email.mime.text import MIMEText
@@ -25,7 +24,7 @@ def json_to_excel(json_data: dict) -> str:
     :param json_data:
     :return:
     """
-    file_pth = os.path.join(os.path.dirname(__file__), "tmp", datetime.now().strftime("%Y-%m-%d_%H-%M-%S")+".xlsx")
+    file_pth = os.path.join(os.path.dirname(__file__), "tmp", datetime.now().strftime("%Y-%m-%d_%H-%M-%S") + ".xlsx")
     workbook = xlsxwriter.Workbook(file_pth)
     worksheet = workbook.add_worksheet()
 
@@ -45,10 +44,10 @@ def json_to_excel(json_data: dict) -> str:
         worksheet.write(0, col, h)
 
     for row, el in enumerate(clear_data):
-        worksheet.write(row+1, 0, el["FIO"])
-        worksheet.write(row+1, 1, el["Email"])
-        worksheet.write(row+1, 2, el["Date"])
-        worksheet.write(row+1, 3, el["Receipt"])
+        worksheet.write(row + 1, 0, el["FIO"])
+        worksheet.write(row + 1, 1, el["Email"])
+        worksheet.write(row + 1, 2, el["Date"])
+        worksheet.write(row + 1, 3, el["Receipt"])
 
     workbook.close()
     return file_pth
@@ -105,5 +104,5 @@ def execute_mailing_in_chat():
 
 
 if __name__ == "__main__":
-    #@TODO: argparse input arguments if they are
+    # @TODO: argparse input arguments if they are
     main()

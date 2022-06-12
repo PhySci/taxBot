@@ -32,3 +32,6 @@ EMAIL_LOGIN = os.getenv('EMAIL_LOGIN')
 EMAIL_PASSWORD = os.getenv('EMAIL_PASSWORD')
 SMTP_SERVER = os.getenv('SMTP_SERVER')
 SMTP_PORT = os.getenv('SMTP_PORT')
+
+# IDs with admin privileges
+SUPERUSER_IDS = os.getenv('SUPERUSER_IDS')

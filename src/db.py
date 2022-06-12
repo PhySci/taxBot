@@ -18,6 +18,7 @@ STATUS_RECEIPT_ALREADY_EXIST = 2
 STATUS_USER_ALREADY_EXIST = 3
 STATUS_USER_ALREADY_DEACTIVATED = 4
 STATUS_MAIL_ALREADY_EXIST = 5
+STATUS_PERMISSIONS_EXIST = 6
 STATUS_FAIL = 10
 
 
@@ -319,3 +320,28 @@ class DBDriver:
         session.add(period)
         session.commit()
         session.close()
+
+    def create_superuser(self, email: str):
+        session = self._sm()
+        db_user = session.query(User).filter(User.email == email)
+        if db_user.count() == 0:
+            _logger.error(
+                f"User with e-mail '{email}' does not exists in database. STATUS_FAIL"
+            )
+            return STATUS_FAIL
+
+        user = db_user.one()
+
+        if user.role == "admin":
+            _logger.warning(
+                f"Role of user with e-mail '{email}' is already 'admin'. STATUS_PERMISSIONS_EXIST"
+            )
+            return STATUS_PERMISSIONS_EXIST
+
+        user.role = "admin"
+        session.commit()
+        status = user.role
+        session.close()
+        if status == "admin":
+            _logger.info(f"Role of user with email '{email}' has been changed to 'admin'. STATUS_OK")
+            return STATUS_OK

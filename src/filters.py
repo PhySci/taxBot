@@ -1,11 +1,18 @@
 from aiogram import types
-from aiogram.dispatcher.filters import Filter, Command
+from aiogram.dispatcher.filters import Command, BoundFilter
+
+from src.settings import SUPERUSER_IDS
 
 
-class CommandNotInListFilter(Filter):
+class IsAdmin(BoundFilter):
+
     def __init__(self, commands: Command):
         self.commands = commands
 
     async def check(self, message: types.Message) -> bool:
-        if message.text.startswith('/'):
-            return message.text[1:] in self.commands.commands
+        admins = SUPERUSER_IDS.split(',')
+        user = message.from_user.id
+        if str(user) not in admins:
+            await message.answer('Вы не являетесь администратором')
+            return False
+        return message.text[1:] in self.commands.commands

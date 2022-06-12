@@ -2,7 +2,6 @@ import locale
 import logging
 import handlers
 
-import aiogram
 from aiogram.types import BotCommand
 from aiogram import Bot, executor
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
@@ -11,7 +10,9 @@ from aiogram.dispatcher import Dispatcher
 from aiogram.utils.executor import start_webhook
 from aiogram.dispatcher.filters import Text
 
-from settings import BOT_TOKEN, WEBHOOK_URL, WEBHOOK_PATH, WEBHOOK_HOST, WEBAPP_HOST, WEBAPP_PORT, LOCAL_DEV
+from settings import BOT_TOKEN, WEBHOOK_URL, WEBHOOK_PATH, WEBHOOK_HOST, WEBAPP_HOST, WEBAPP_PORT, \
+    LOCAL_DEV
+from src.filters import IsAdmin
 from utils import setup_logging
 
 try:
@@ -65,6 +66,7 @@ commands_list = [
 
 def main():
     setup_logging()
+    dp.filters_factory.bind(IsAdmin)
 
     dp.register_message_handler(handlers.cmd_start, commands="start")
     dp.register_message_handler(handlers.additional_info, commands="add_info")
@@ -89,6 +91,9 @@ def main():
     dp.register_message_handler(handlers.user_input_patronymic_name, state=handlers.UserInput.patronymic_name)
     dp.register_message_handler(handlers.user_input_last_name, state=handlers.UserInput.last_name)
     dp.register_message_handler(handlers.user_input_email, state=handlers.UserInput.email)
+
+    dp.register_message_handler(handlers.set_create_superuser, commands="create_superuser")
+    dp.register_message_handler(handlers.create_superuser, state=handlers.SuperUserState.email)
 
     dp.register_message_handler(handlers.catch_other_message)
 

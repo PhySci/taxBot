@@ -1,4 +1,3 @@
-import os
 import re
 
 from aiogram import types
@@ -7,9 +6,10 @@ from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.utils.callback_data import CallbackData
 
 from db import (
-    DBDriver, STATUS_OK, STATUS_FAIL, STATUS_RECEIPT_ALREADY_EXIST,
-    STATUS_USER_ALREADY_EXIST, STATUS_RECEIPT_UNKNOWN_USER, STATUS_MAIL_ALREADY_EXIST
+    DBDriver, STATUS_OK, STATUS_FAIL, STATUS_RECEIPT_ALREADY_EXIST, STATUS_USER_ALREADY_EXIST,
+    STATUS_RECEIPT_UNKNOWN_USER, STATUS_MAIL_ALREADY_EXIST, STATUS_PERMISSIONS_EXIST
 )
+from src.settings import SUPERUSER_IDS
 
 
 class UserInput(StatesGroup):
@@ -21,6 +21,10 @@ class UserInput(StatesGroup):
 
 
 class SendingMail(StatesGroup):
+    email = State()
+
+
+class SuperUserState(StatesGroup):
     email = State()
 
 
@@ -176,11 +180,9 @@ async def add_email_for_sending(message: types.Message, state: FSMContext):
     if re.match(pattern, message.text) is None:
         await message.answer("Пожалуйста, напишите e-mail в формате user@example.com")
         return
-
     await state.finish()
 
     driver = DBDriver()
-
     if not driver.is_user_admin(message["from"]["id"]):
         await message.answer("Вы не являетесь админом этого бота")
         return
@@ -190,6 +192,32 @@ async def add_email_for_sending(message: types.Message, state: FSMContext):
         await message.answer("E-mail добавлен в базу")
     elif status == STATUS_MAIL_ALREADY_EXIST:
         await message.answer("E-mail уже есть в базе")
+    elif status == STATUS_FAIL:
+        await message.answer("Ой, как же больно! Что-то сломалось внутри меня.")
+
+
+async def set_create_superuser(message: types.Message):
+    admin_list = SUPERUSER_IDS.split(',')
+    user = message.from_user.id
+    if str(user) not in admin_list:
+        await message.answer('Вы не являетесь администратором')
+    await SuperUserState.email.set()
+    await message.answer("Пожалуйста, напишите e-mail пользователя для установки прав администратора: ")
+
+
+async def create_superuser(message: types.Message, state: FSMContext):
+    pattern = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+    if re.match(pattern, message.text) is None:
+        await message.answer("Пожалуйста, напишите e-mail в формате user@example.com")
+        return
+    await state.finish()
+
+    driver = DBDriver()
+    status = driver.create_superuser(message.text)
+    if status == STATUS_OK:
+        await message.answer("Права администратора установлены")
+    elif status == STATUS_PERMISSIONS_EXIST:
+        await message.answer("Права администратора уже есть у пользователя")
     elif status == STATUS_FAIL:
         await message.answer("Ой, как же больно! Что-то сломалось внутри меня.")
 
