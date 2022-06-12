@@ -201,6 +201,7 @@ async def set_create_superuser(message: types.Message):
     user = message.from_user.id
     if str(user) not in admin_list:
         await message.answer('Вы не являетесь администратором')
+        return
     await SuperUserState.email.set()
     await message.answer("Пожалуйста, напишите e-mail пользователя для установки прав администратора: ")
 

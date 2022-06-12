@@ -1,0 +1,566 @@
+2022-06-12 12:56:07,763: DEBUG: proactor_events.py: __init__(): 623: Using proactor: IocpProactor
+2022-06-12 12:56:08,188: INFO: executor.py: _welcome(): 362: Bot: edw_assistant_bot [@edw_assistant_bot]
+2022-06-12 12:56:08,458: WARNING: executor.py: _skip_updates(): 358: Updates were skipped successfully.
+2022-06-12 12:56:08,458: INFO: dispatcher.py: start_polling(): 358: Start polling.
+2022-06-12 12:56:37,843: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1324] in chat [private:320191396]
+2022-06-12 12:56:41,670: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995212]: [success] (in 3827 ms)
+2022-06-12 12:56:53,036: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1326] in chat [private:320191396]
+2022-06-12 12:56:53,164: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995213]: [success] (in 128 ms)
+2022-06-12 12:57:36,851: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1328] in chat [private:320191396]
+2022-06-12 12:57:37,029: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995214]: [success] (in 178 ms)
+2022-06-12 12:57:51,462: INFO: dispatcher.py: stop_polling(): 433: Stop polling...
+2022-06-12 12:57:51,463: WARNING: executor.py: start_polling(): 329: Goodbye!
+2022-06-12 13:13:42,153: DEBUG: proactor_events.py: __init__(): 623: Using proactor: IocpProactor
+2022-06-12 13:13:42,437: INFO: executor.py: _welcome(): 362: Bot: edw_assistant_bot [@edw_assistant_bot]
+2022-06-12 13:13:42,596: WARNING: executor.py: _skip_updates(): 358: Updates were skipped successfully.
+2022-06-12 13:13:42,597: INFO: dispatcher.py: start_polling(): 358: Start polling.
+2022-06-12 13:13:55,950: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1330] in chat [private:320191396]
+2022-06-12 13:13:56,136: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995215]: [success] (in 186 ms)
+2022-06-12 13:14:01,130: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1332] in chat [private:320191396]
+2022-06-12 13:14:01,238: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995216]: [success] (in 108 ms)
+2022-06-12 13:14:06,264: INFO: dispatcher.py: stop_polling(): 433: Stop polling...
+2022-06-12 13:14:06,268: WARNING: executor.py: start_polling(): 329: Goodbye!
+2022-06-12 13:16:53,030: DEBUG: proactor_events.py: __init__(): 623: Using proactor: IocpProactor
+2022-06-12 13:16:53,336: INFO: executor.py: _welcome(): 362: Bot: edw_assistant_bot [@edw_assistant_bot]
+2022-06-12 13:16:53,489: WARNING: executor.py: _skip_updates(): 358: Updates were skipped successfully.
+2022-06-12 13:16:53,490: INFO: dispatcher.py: start_polling(): 358: Start polling.
+2022-06-12 13:17:00,552: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1334] in chat [private:320191396]
+2022-06-12 13:17:00,710: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995217]: [success] (in 158 ms)
+2022-06-12 13:17:07,159: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1336] in chat [private:320191396]
+2022-06-12 13:17:07,160: INFO: logging.py: on_pre_process_error(): 150: Process update [ID:266995218]: [failed] (in 1 ms)
+2022-06-12 13:17:07,162: ERROR: base_events.py: default_exception_handler(): 1738: Task exception was never retrieved
+future: <Task finished name='Task-14' coro=<Dispatcher._process_polling_updates() done, defined at C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py:407> exception=TypeError('IsAdmin() takes no arguments')>
+Traceback (most recent call last):
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py", line 415, in _process_polling_updates
+    for responses in itertools.chain.from_iterable(await self.process_updates(updates, fast)):
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py", line 235, in process_updates
+    return await asyncio.gather(*tasks)
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\handler.py", line 116, in notify
+    response = await handler_obj.handler(*args, **partial_data)
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py", line 256, in process_update
+    return await self.message_handlers.notify(update.message)
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\handler.py", line 107, in notify
+    data.update(await check_filters(handler_obj.filters, args))
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\filters\filters.py", line 72, in check_filters
+    f = await execute_filter(filter_, args)
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\filters\filters.py", line 58, in execute_filter
+    return filter_.filter(*args, **filter_.kwargs)
+TypeError: IsAdmin() takes no arguments
+2022-06-12 13:17:59,468: INFO: dispatcher.py: stop_polling(): 433: Stop polling...
+2022-06-12 13:17:59,470: WARNING: executor.py: start_polling(): 329: Goodbye!
+2022-06-12 13:22:42,753: DEBUG: proactor_events.py: __init__(): 623: Using proactor: IocpProactor
+2022-06-12 13:22:43,129: INFO: executor.py: _welcome(): 362: Bot: edw_assistant_bot [@edw_assistant_bot]
+2022-06-12 13:22:43,355: WARNING: executor.py: _skip_updates(): 358: Updates were skipped successfully.
+2022-06-12 13:22:43,355: INFO: dispatcher.py: start_polling(): 358: Start polling.
+2022-06-12 13:22:48,058: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1337] in chat [private:320191396]
+2022-06-12 13:22:48,222: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995219]: [success] (in 164 ms)
+2022-06-12 13:23:49,936: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1339] in chat [private:320191396]
+2022-06-12 13:23:50,052: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995220]: [success] (in 117 ms)
+2022-06-12 13:23:58,718: INFO: dispatcher.py: stop_polling(): 433: Stop polling...
+2022-06-12 13:23:58,720: WARNING: executor.py: start_polling(): 329: Goodbye!
+2022-06-12 13:46:33,266: DEBUG: proactor_events.py: __init__(): 623: Using proactor: IocpProactor
+2022-06-12 13:46:33,607: INFO: executor.py: _welcome(): 362: Bot: edw_assistant_bot [@edw_assistant_bot]
+2022-06-12 13:46:33,752: WARNING: executor.py: _skip_updates(): 358: Updates were skipped successfully.
+2022-06-12 13:46:33,753: INFO: dispatcher.py: start_polling(): 358: Start polling.
+2022-06-12 13:47:29,640: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1341] in chat [private:696435253]
+2022-06-12 13:47:31,589: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995221]: [success] (in 1950 ms)
+2022-06-12 13:48:05,140: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1343] in chat [private:696435253]
+2022-06-12 13:48:05,258: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995222]: [success] (in 118 ms)
+2022-06-12 13:48:18,959: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1345] in chat [private:320191396]
+2022-06-12 13:48:19,065: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995223]: [success] (in 108 ms)
+2022-06-12 13:48:31,213: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1347] in chat [private:696435253]
+2022-06-12 13:48:31,349: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995224]: [success] (in 137 ms)
+2022-06-12 13:49:24,759: INFO: dispatcher.py: stop_polling(): 433: Stop polling...
+2022-06-12 13:49:24,760: WARNING: executor.py: start_polling(): 329: Goodbye!
+2022-06-12 13:50:22,679: DEBUG: proactor_events.py: __init__(): 623: Using proactor: IocpProactor
+2022-06-12 13:50:23,222: INFO: executor.py: _welcome(): 362: Bot: edw_assistant_bot [@edw_assistant_bot]
+2022-06-12 13:50:23,394: WARNING: executor.py: _skip_updates(): 358: Updates were skipped successfully.
+2022-06-12 13:50:23,396: INFO: dispatcher.py: start_polling(): 358: Start polling.
+2022-06-12 13:50:40,381: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1349] in chat [private:320191396]
+2022-06-12 13:50:42,312: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995225]: [success] (in 1932 ms)
+2022-06-12 13:50:54,675: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1351] in chat [private:320191396]
+2022-06-12 13:50:54,788: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995226]: [success] (in 114 ms)
+2022-06-12 13:51:37,537: INFO: dispatcher.py: stop_polling(): 433: Stop polling...
+2022-06-12 13:51:37,539: WARNING: executor.py: start_polling(): 329: Goodbye!
+2022-06-12 13:52:16,626: DEBUG: proactor_events.py: __init__(): 623: Using proactor: IocpProactor
+2022-06-12 13:52:16,909: INFO: executor.py: _welcome(): 362: Bot: edw_assistant_bot [@edw_assistant_bot]
+2022-06-12 13:52:17,054: WARNING: executor.py: _skip_updates(): 358: Updates were skipped successfully.
+2022-06-12 13:52:17,055: INFO: dispatcher.py: start_polling(): 358: Start polling.
+2022-06-12 13:53:59,649: INFO: dispatcher.py: stop_polling(): 433: Stop polling...
+2022-06-12 13:53:59,653: WARNING: executor.py: start_polling(): 329: Goodbye!
+2022-06-12 13:57:28,443: DEBUG: proactor_events.py: __init__(): 623: Using proactor: IocpProactor
+2022-06-12 13:57:28,835: INFO: executor.py: _welcome(): 362: Bot: edw_assistant_bot [@edw_assistant_bot]
+2022-06-12 13:57:29,001: WARNING: executor.py: _skip_updates(): 358: Updates were skipped successfully.
+2022-06-12 13:57:29,001: INFO: dispatcher.py: start_polling(): 358: Start polling.
+2022-06-12 13:57:32,892: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1355] in chat [private:320191396]
+2022-06-12 13:57:32,893: INFO: logging.py: on_pre_process_error(): 150: Process update [ID:266995229]: [failed] (in 1 ms)
+2022-06-12 13:57:32,893: ERROR: base_events.py: default_exception_handler(): 1738: Task exception was never retrieved
+future: <Task finished name='Task-9' coro=<Dispatcher._process_polling_updates() done, defined at C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py:407> exception=TypeError("object list can't be used in 'await' expression")>
+Traceback (most recent call last):
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py", line 415, in _process_polling_updates
+    for responses in itertools.chain.from_iterable(await self.process_updates(updates, fast)):
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py", line 235, in process_updates
+    return await asyncio.gather(*tasks)
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\handler.py", line 116, in notify
+    response = await handler_obj.handler(*args, **partial_data)
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py", line 256, in process_update
+    return await self.message_handlers.notify(update.message)
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\handler.py", line 107, in notify
+    data.update(await check_filters(handler_obj.filters, args))
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\filters\filters.py", line 72, in check_filters
+    f = await execute_filter(filter_, args)
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\filters\filters.py", line 56, in execute_filter
+    return await filter_.filter(*args, **filter_.kwargs)
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\filters\filters.py", line 161, in __call__
+    return await self.check(*args)
+  File "C:\Users\Пользователь\Projects\taxBot\src\filters.py", line 25, in check
+    admins = await SUPERUSER_IDS.split(',')
+TypeError: object list can't be used in 'await' expression
+2022-06-12 13:57:46,552: INFO: dispatcher.py: stop_polling(): 433: Stop polling...
+2022-06-12 13:57:46,556: WARNING: executor.py: start_polling(): 329: Goodbye!
+2022-06-12 13:58:41,966: DEBUG: proactor_events.py: __init__(): 623: Using proactor: IocpProactor
+2022-06-12 13:58:42,276: INFO: executor.py: _welcome(): 362: Bot: edw_assistant_bot [@edw_assistant_bot]
+2022-06-12 13:58:42,448: WARNING: executor.py: _skip_updates(): 358: Updates were skipped successfully.
+2022-06-12 13:58:42,448: INFO: dispatcher.py: start_polling(): 358: Start polling.
+2022-06-12 13:58:46,677: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1356] in chat [private:320191396]
+2022-06-12 13:58:46,937: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995230]: [success] (in 260 ms)
+2022-06-12 13:59:40,097: INFO: dispatcher.py: stop_polling(): 433: Stop polling...
+2022-06-12 13:59:40,099: WARNING: executor.py: start_polling(): 329: Goodbye!
+2022-06-12 14:04:13,305: DEBUG: proactor_events.py: __init__(): 623: Using proactor: IocpProactor
+2022-06-12 14:04:13,608: INFO: executor.py: _welcome(): 362: Bot: edw_assistant_bot [@edw_assistant_bot]
+2022-06-12 14:04:13,754: WARNING: executor.py: _skip_updates(): 358: Updates were skipped successfully.
+2022-06-12 14:04:13,754: INFO: dispatcher.py: start_polling(): 358: Start polling.
+2022-06-12 14:04:17,528: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1359] in chat [private:320191396]
+2022-06-12 14:04:17,530: INFO: logging.py: on_pre_process_error(): 150: Process update [ID:266995231]: [failed] (in 2 ms)
+2022-06-12 14:04:17,532: ERROR: base_events.py: default_exception_handler(): 1738: Task exception was never retrieved
+future: <Task finished name='Task-9' coro=<Dispatcher._process_polling_updates() done, defined at C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py:407> exception=TypeError("object list can't be used in 'await' expression")>
+Traceback (most recent call last):
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py", line 415, in _process_polling_updates
+    for responses in itertools.chain.from_iterable(await self.process_updates(updates, fast)):
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py", line 235, in process_updates
+    return await asyncio.gather(*tasks)
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\handler.py", line 116, in notify
+    response = await handler_obj.handler(*args, **partial_data)
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py", line 256, in process_update
+    return await self.message_handlers.notify(update.message)
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\handler.py", line 107, in notify
+    data.update(await check_filters(handler_obj.filters, args))
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\filters\filters.py", line 72, in check_filters
+    f = await execute_filter(filter_, args)
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\filters\filters.py", line 56, in execute_filter
+    return await filter_.filter(*args, **filter_.kwargs)
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\filters\filters.py", line 161, in __call__
+    return await self.check(*args)
+  File "C:\Users\Пользователь\Projects\taxBot\src\filters.py", line 25, in check
+    admins = await SUPERUSER_IDS.split(',')
+TypeError: object list can't be used in 'await' expression
+2022-06-12 14:04:26,489: INFO: dispatcher.py: stop_polling(): 433: Stop polling...
+2022-06-12 14:04:26,494: WARNING: executor.py: start_polling(): 329: Goodbye!
+2022-06-12 14:04:29,561: DEBUG: proactor_events.py: __init__(): 623: Using proactor: IocpProactor
+2022-06-12 14:04:29,868: INFO: executor.py: _welcome(): 362: Bot: edw_assistant_bot [@edw_assistant_bot]
+2022-06-12 14:04:30,061: WARNING: executor.py: _skip_updates(): 358: Updates were skipped successfully.
+2022-06-12 14:04:30,061: INFO: dispatcher.py: start_polling(): 358: Start polling.
+2022-06-12 14:04:32,674: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1360] in chat [private:320191396]
+2022-06-12 14:04:32,950: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995232]: [success] (in 276 ms)
+2022-06-12 14:05:52,750: INFO: dispatcher.py: stop_polling(): 433: Stop polling...
+2022-06-12 14:05:52,751: WARNING: executor.py: start_polling(): 329: Goodbye!
+2022-06-12 14:06:01,921: DEBUG: proactor_events.py: __init__(): 623: Using proactor: IocpProactor
+2022-06-12 14:06:02,242: INFO: executor.py: _welcome(): 362: Bot: edw_assistant_bot [@edw_assistant_bot]
+2022-06-12 14:06:02,409: WARNING: executor.py: _skip_updates(): 358: Updates were skipped successfully.
+2022-06-12 14:06:02,412: INFO: dispatcher.py: start_polling(): 358: Start polling.
+2022-06-12 14:06:13,292: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1364] in chat [private:320191396]
+2022-06-12 14:07:09,970: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995234]: [success] (in 56678 ms)
+2022-06-12 14:07:09,971: INFO: dispatcher.py: stop_polling(): 433: Stop polling...
+2022-06-12 14:07:17,165: DEBUG: proactor_events.py: __init__(): 623: Using proactor: IocpProactor
+2022-06-12 14:07:17,456: INFO: executor.py: _welcome(): 362: Bot: edw_assistant_bot [@edw_assistant_bot]
+2022-06-12 14:07:17,726: WARNING: executor.py: _skip_updates(): 358: Updates were skipped successfully.
+2022-06-12 14:07:17,726: INFO: dispatcher.py: start_polling(): 358: Start polling.
+2022-06-12 14:07:19,764: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1365] in chat [private:320191396]
+2022-06-12 14:07:19,943: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995235]: [success] (in 178 ms)
+2022-06-12 14:08:16,585: INFO: dispatcher.py: stop_polling(): 433: Stop polling...
+2022-06-12 14:08:16,586: WARNING: executor.py: start_polling(): 329: Goodbye!
+2022-06-12 14:08:30,166: DEBUG: proactor_events.py: __init__(): 623: Using proactor: IocpProactor
+2022-06-12 14:08:30,540: INFO: executor.py: _welcome(): 362: Bot: edw_assistant_bot [@edw_assistant_bot]
+2022-06-12 14:08:30,696: WARNING: executor.py: _skip_updates(): 358: Updates were skipped successfully.
+2022-06-12 14:08:30,697: INFO: dispatcher.py: start_polling(): 358: Start polling.
+2022-06-12 14:08:31,222: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1367] in chat [private:320191396]
+2022-06-12 14:08:31,341: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995236]: [success] (in 119 ms)
+2022-06-12 14:08:42,104: INFO: dispatcher.py: stop_polling(): 433: Stop polling...
+2022-06-12 14:08:42,106: WARNING: executor.py: start_polling(): 329: Goodbye!
+2022-06-12 14:09:07,807: DEBUG: proactor_events.py: __init__(): 623: Using proactor: IocpProactor
+2022-06-12 14:09:08,069: INFO: executor.py: _welcome(): 362: Bot: edw_assistant_bot [@edw_assistant_bot]
+2022-06-12 14:09:08,227: WARNING: executor.py: _skip_updates(): 358: Updates were skipped successfully.
+2022-06-12 14:09:08,227: INFO: dispatcher.py: start_polling(): 358: Start polling.
+2022-06-12 14:09:11,004: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1369] in chat [private:320191396]
+2022-06-12 14:09:11,006: INFO: logging.py: on_pre_process_error(): 150: Process update [ID:266995237]: [failed] (in 2 ms)
+2022-06-12 14:09:11,007: ERROR: base_events.py: default_exception_handler(): 1738: Task exception was never retrieved
+future: <Task finished name='Task-9' coro=<Dispatcher._process_polling_updates() done, defined at C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py:407> exception=TypeError('IsAdmin() takes no arguments')>
+Traceback (most recent call last):
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py", line 415, in _process_polling_updates
+    for responses in itertools.chain.from_iterable(await self.process_updates(updates, fast)):
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py", line 235, in process_updates
+    return await asyncio.gather(*tasks)
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\handler.py", line 116, in notify
+    response = await handler_obj.handler(*args, **partial_data)
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py", line 256, in process_update
+    return await self.message_handlers.notify(update.message)
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\handler.py", line 107, in notify
+    data.update(await check_filters(handler_obj.filters, args))
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\filters\filters.py", line 72, in check_filters
+    f = await execute_filter(filter_, args)
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\filters\filters.py", line 58, in execute_filter
+    return filter_.filter(*args, **filter_.kwargs)
+TypeError: IsAdmin() takes no arguments
+2022-06-12 14:09:19,407: INFO: dispatcher.py: stop_polling(): 433: Stop polling...
+2022-06-12 14:09:19,409: WARNING: executor.py: start_polling(): 329: Goodbye!
+2022-06-12 14:09:22,914: DEBUG: proactor_events.py: __init__(): 623: Using proactor: IocpProactor
+2022-06-12 14:09:23,207: INFO: executor.py: _welcome(): 362: Bot: edw_assistant_bot [@edw_assistant_bot]
+2022-06-12 14:09:23,383: WARNING: executor.py: _skip_updates(): 358: Updates were skipped successfully.
+2022-06-12 14:09:23,384: INFO: dispatcher.py: start_polling(): 358: Start polling.
+2022-06-12 14:09:24,449: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1370] in chat [private:320191396]
+2022-06-12 14:09:24,544: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995238]: [success] (in 95 ms)
+2022-06-12 14:21:06,741: INFO: dispatcher.py: stop_polling(): 433: Stop polling...
+2022-06-12 14:21:06,788: WARNING: executor.py: start_polling(): 329: Goodbye!
+2022-06-12 14:38:56,398: DEBUG: proactor_events.py: __init__(): 623: Using proactor: IocpProactor
+2022-06-12 14:38:56,870: INFO: executor.py: _welcome(): 362: Bot: edw_assistant_bot [@edw_assistant_bot]
+2022-06-12 14:38:57,070: WARNING: executor.py: _skip_updates(): 358: Updates were skipped successfully.
+2022-06-12 14:38:57,070: INFO: dispatcher.py: start_polling(): 358: Start polling.
+2022-06-12 14:39:01,986: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1372] in chat [private:320191396]
+2022-06-12 14:39:01,987: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995239]: [success] (in 1 ms)
+2022-06-12 14:39:12,765: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1373] in chat [private:320191396]
+2022-06-12 14:39:14,768: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995240]: [success] (in 2003 ms)
+2022-06-12 14:39:18,935: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1375] in chat [private:320191396]
+2022-06-12 14:39:18,936: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995241]: [success] (in 1 ms)
+2022-06-12 14:39:49,388: INFO: dispatcher.py: stop_polling(): 433: Stop polling...
+2022-06-12 14:39:49,389: WARNING: executor.py: start_polling(): 329: Goodbye!
+2022-06-12 14:39:52,688: DEBUG: proactor_events.py: __init__(): 623: Using proactor: IocpProactor
+2022-06-12 14:39:52,985: INFO: executor.py: _welcome(): 362: Bot: edw_assistant_bot [@edw_assistant_bot]
+2022-06-12 14:39:53,163: WARNING: executor.py: _skip_updates(): 358: Updates were skipped successfully.
+2022-06-12 14:39:53,164: INFO: dispatcher.py: start_polling(): 358: Start polling.
+2022-06-12 14:39:54,691: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1376] in chat [private:320191396]
+2022-06-12 14:39:54,692: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995242]: [success] (in 6 ms)
+2022-06-12 14:39:55,793: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1377] in chat [private:320191396]
+2022-06-12 14:39:55,794: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995243]: [success] (in 1 ms)
+2022-06-12 14:39:56,676: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1378] in chat [private:320191396]
+2022-06-12 14:39:56,679: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995244]: [success] (in 3 ms)
+2022-06-12 14:40:06,975: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1379] in chat [private:320191396]
+2022-06-12 14:40:06,976: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995245]: [success] (in 1 ms)
+2022-06-12 14:40:09,913: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1380] in chat [private:320191396]
+2022-06-12 14:40:09,916: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995246]: [success] (in 3 ms)
+2022-06-12 14:40:31,666: INFO: dispatcher.py: stop_polling(): 433: Stop polling...
+2022-06-12 14:40:31,667: WARNING: executor.py: start_polling(): 329: Goodbye!
+2022-06-12 14:41:10,757: DEBUG: proactor_events.py: __init__(): 623: Using proactor: IocpProactor
+2022-06-12 14:41:11,885: INFO: executor.py: _welcome(): 362: Bot: edw_assistant_bot [@edw_assistant_bot]
+2022-06-12 14:41:12,075: WARNING: executor.py: _skip_updates(): 358: Updates were skipped successfully.
+2022-06-12 14:41:12,076: INFO: dispatcher.py: start_polling(): 358: Start polling.
+2022-06-12 14:41:13,418: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1381] in chat [private:320191396]
+2022-06-12 14:41:13,964: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995247]: [success] (in 545 ms)
+2022-06-12 14:41:18,777: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1383] in chat [private:320191396]
+2022-06-12 14:41:18,894: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995248]: [success] (in 117 ms)
+2022-06-12 14:41:25,140: INFO: dispatcher.py: stop_polling(): 433: Stop polling...
+2022-06-12 14:41:25,141: WARNING: executor.py: start_polling(): 329: Goodbye!
+2022-06-12 14:42:10,732: DEBUG: proactor_events.py: __init__(): 623: Using proactor: IocpProactor
+2022-06-12 14:42:11,138: INFO: executor.py: _welcome(): 362: Bot: edw_assistant_bot [@edw_assistant_bot]
+2022-06-12 14:42:11,338: WARNING: executor.py: _skip_updates(): 358: Updates were skipped successfully.
+2022-06-12 14:42:11,339: INFO: dispatcher.py: start_polling(): 358: Start polling.
+2022-06-12 14:42:14,054: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1385] in chat [private:320191396]
+2022-06-12 14:42:14,203: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995249]: [success] (in 149 ms)
+2022-06-12 14:42:15,446: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1387] in chat [private:320191396]
+2022-06-12 14:42:15,681: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995250]: [success] (in 234 ms)
+2022-06-12 14:42:16,900: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1389] in chat [private:320191396]
+2022-06-12 14:42:16,901: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995251]: [success] (in 2 ms)
+2022-06-12 14:42:24,211: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1390] in chat [private:320191396]
+2022-06-12 14:42:26,933: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995252]: [success] (in 2722 ms)
+2022-06-12 14:42:30,666: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1392] in chat [private:320191396]
+2022-06-12 14:42:30,667: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995253]: [success] (in 1 ms)
+2022-06-12 14:42:52,582: INFO: dispatcher.py: stop_polling(): 433: Stop polling...
+2022-06-12 14:42:52,583: WARNING: executor.py: start_polling(): 329: Goodbye!
+2022-06-12 14:43:37,149: DEBUG: proactor_events.py: __init__(): 623: Using proactor: IocpProactor
+2022-06-12 14:43:37,462: INFO: executor.py: _welcome(): 362: Bot: edw_assistant_bot [@edw_assistant_bot]
+2022-06-12 14:43:37,606: WARNING: executor.py: _skip_updates(): 358: Updates were skipped successfully.
+2022-06-12 14:43:37,607: INFO: dispatcher.py: start_polling(): 358: Start polling.
+2022-06-12 14:43:39,502: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1393] in chat [private:320191396]
+2022-06-12 14:43:41,453: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995254]: [success] (in 1951 ms)
+2022-06-12 14:43:42,855: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1395] in chat [private:320191396]
+2022-06-12 14:43:42,856: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995255]: [success] (in 1 ms)
+2022-06-12 14:45:44,351: INFO: dispatcher.py: stop_polling(): 433: Stop polling...
+2022-06-12 14:45:44,352: WARNING: executor.py: start_polling(): 329: Goodbye!
+2022-06-12 14:46:16,061: DEBUG: proactor_events.py: __init__(): 623: Using proactor: IocpProactor
+2022-06-12 14:46:17,263: INFO: executor.py: _welcome(): 362: Bot: edw_assistant_bot [@edw_assistant_bot]
+2022-06-12 14:46:17,526: WARNING: executor.py: _skip_updates(): 358: Updates were skipped successfully.
+2022-06-12 14:46:17,527: INFO: dispatcher.py: start_polling(): 358: Start polling.
+2022-06-12 14:46:20,147: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1396] in chat [private:320191396]
+2022-06-12 14:46:24,196: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995256]: [success] (in 4050 ms)
+2022-06-12 14:46:27,225: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1398] in chat [private:320191396]
+2022-06-12 14:46:27,419: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995257]: [success] (in 195 ms)
+2022-06-12 14:46:29,190: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1400] in chat [private:320191396]
+2022-06-12 14:46:29,410: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995258]: [success] (in 220 ms)
+2022-06-12 14:46:31,665: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1402] in chat [private:320191396]
+2022-06-12 14:46:31,666: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995259]: [success] (in 1 ms)
+2022-06-12 14:47:05,656: INFO: dispatcher.py: stop_polling(): 433: Stop polling...
+2022-06-12 14:47:05,659: WARNING: executor.py: start_polling(): 329: Goodbye!
+2022-06-12 14:47:10,169: DEBUG: proactor_events.py: __init__(): 623: Using proactor: IocpProactor
+2022-06-12 14:47:10,837: INFO: executor.py: _welcome(): 362: Bot: edw_assistant_bot [@edw_assistant_bot]
+2022-06-12 14:47:11,056: WARNING: executor.py: _skip_updates(): 358: Updates were skipped successfully.
+2022-06-12 14:47:11,057: INFO: dispatcher.py: start_polling(): 358: Start polling.
+2022-06-12 14:47:14,646: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1403] in chat [private:320191396]
+2022-06-12 14:47:14,785: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995260]: [success] (in 139 ms)
+2022-06-12 14:47:16,473: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1405] in chat [private:320191396]
+2022-06-12 14:47:16,579: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995261]: [success] (in 106 ms)
+2022-06-12 14:47:18,605: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1407] in chat [private:320191396]
+2022-06-12 14:47:18,768: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995262]: [success] (in 163 ms)
+2022-06-12 14:47:48,406: INFO: dispatcher.py: stop_polling(): 433: Stop polling...
+2022-06-12 14:47:48,407: WARNING: executor.py: start_polling(): 329: Goodbye!
+2022-06-12 14:47:58,943: DEBUG: proactor_events.py: __init__(): 623: Using proactor: IocpProactor
+2022-06-12 14:47:59,347: INFO: executor.py: _welcome(): 362: Bot: edw_assistant_bot [@edw_assistant_bot]
+2022-06-12 14:47:59,590: WARNING: executor.py: _skip_updates(): 358: Updates were skipped successfully.
+2022-06-12 14:47:59,591: INFO: dispatcher.py: start_polling(): 358: Start polling.
+2022-06-12 14:48:02,257: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1409] in chat [private:320191396]
+2022-06-12 14:48:02,631: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995263]: [success] (in 373 ms)
+2022-06-12 14:48:08,754: INFO: dispatcher.py: stop_polling(): 433: Stop polling...
+2022-06-12 14:48:08,755: WARNING: executor.py: start_polling(): 329: Goodbye!
+2022-06-12 14:58:45,485: DEBUG: proactor_events.py: __init__(): 623: Using proactor: IocpProactor
+2022-06-12 14:58:46,204: INFO: executor.py: _welcome(): 362: Bot: edw_assistant_bot [@edw_assistant_bot]
+2022-06-12 14:58:46,502: WARNING: executor.py: _skip_updates(): 358: Updates were skipped successfully.
+2022-06-12 14:58:46,503: INFO: dispatcher.py: start_polling(): 358: Start polling.
+2022-06-12 14:58:51,020: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1412] in chat [private:320191396]
+2022-06-12 14:58:51,179: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995264]: [success] (in 159 ms)
+2022-06-12 14:58:55,438: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1414] in chat [private:320191396]
+2022-06-12 14:58:55,665: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995265]: [success] (in 228 ms)
+2022-06-12 14:58:59,008: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1416] in chat [private:320191396]
+2022-06-12 14:58:59,157: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995266]: [success] (in 149 ms)
+2022-06-12 14:59:39,413: INFO: dispatcher.py: stop_polling(): 433: Stop polling...
+2022-06-12 14:59:39,415: WARNING: executor.py: start_polling(): 329: Goodbye!
+2022-06-12 15:05:43,281: DEBUG: proactor_events.py: __init__(): 623: Using proactor: IocpProactor
+2022-06-12 15:05:44,110: INFO: executor.py: _welcome(): 362: Bot: edw_assistant_bot [@edw_assistant_bot]
+2022-06-12 15:05:44,403: WARNING: executor.py: _skip_updates(): 358: Updates were skipped successfully.
+2022-06-12 15:05:44,404: INFO: dispatcher.py: start_polling(): 358: Start polling.
+2022-06-12 15:11:15,211: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1418] in chat [private:696435253]
+2022-06-12 15:11:15,672: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995267]: [success] (in 460 ms)
+2022-06-12 15:14:16,455: INFO: dispatcher.py: stop_polling(): 433: Stop polling...
+2022-06-12 15:14:16,459: WARNING: executor.py: start_polling(): 329: Goodbye!
+2022-06-12 15:14:27,158: DEBUG: proactor_events.py: __init__(): 623: Using proactor: IocpProactor
+2022-06-12 15:14:27,590: INFO: executor.py: _welcome(): 362: Bot: edw_assistant_bot [@edw_assistant_bot]
+2022-06-12 15:14:27,789: WARNING: executor.py: _skip_updates(): 358: Updates were skipped successfully.
+2022-06-12 15:14:27,790: INFO: dispatcher.py: start_polling(): 358: Start polling.
+2022-06-12 15:14:44,689: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1421] in chat [private:320191396]
+2022-06-12 15:14:44,847: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995268]: [success] (in 158 ms)
+2022-06-12 15:22:03,067: INFO: dispatcher.py: stop_polling(): 433: Stop polling...
+2022-06-12 15:22:03,078: WARNING: executor.py: start_polling(): 329: Goodbye!
+2022-06-12 15:22:07,064: DEBUG: proactor_events.py: __init__(): 623: Using proactor: IocpProactor
+2022-06-12 15:22:07,374: INFO: executor.py: _welcome(): 362: Bot: edw_assistant_bot [@edw_assistant_bot]
+2022-06-12 15:22:07,527: WARNING: executor.py: _skip_updates(): 358: Updates were skipped successfully.
+2022-06-12 15:22:07,528: INFO: dispatcher.py: start_polling(): 358: Start polling.
+2022-06-12 15:22:10,296: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1423] in chat [private:320191396]
+2022-06-12 15:22:10,409: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995269]: [success] (in 113 ms)
+2022-06-12 15:22:21,451: ERROR: base_events.py: default_exception_handler(): 1738: Task exception was never retrieved
+future: <Task finished name='Task-13' coro=<Dispatcher._process_polling_updates() done, defined at C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py:407> exception=OSError(22, 'Invalid argument')>
+Traceback (most recent call last):
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py", line 415, in _process_polling_updates
+    for responses in itertools.chain.from_iterable(await self.process_updates(updates, fast)):
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py", line 235, in process_updates
+    return await asyncio.gather(*tasks)
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\handler.py", line 116, in notify
+    response = await handler_obj.handler(*args, **partial_data)
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py", line 302, in process_update
+    return await self.my_chat_member_handlers.notify(update.my_chat_member)
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\handler.py", line 100, in notify
+    await self.dispatcher.middleware.trigger(f"pre_process_{self.middleware_key}", args + (data,))
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\middlewares.py", line 53, in trigger
+    await app.trigger(action, args)
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\middlewares.py", line 106, in trigger
+    await handler(*args)
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\contrib\middlewares\logging.py", line 170, in on_pre_process_my_chat_member
+    f"New state: {my_chat_member_update.new_chat_member.to_python()} ")
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\types\base.py", line 177, in to_python
+    value = self.props[name].export(self)
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\types\fields.py", line 95, in export
+    return self.serialize(self.get_value(instance))
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\types\fields.py", line 172, in serialize
+    return round(value.timestamp())
+OSError: [Errno 22] Invalid argument
+2022-06-12 15:22:26,851: INFO: dispatcher.py: stop_polling(): 433: Stop polling...
+2022-06-12 15:22:26,852: WARNING: executor.py: start_polling(): 329: Goodbye!
+2022-06-12 15:39:54,558: DEBUG: proactor_events.py: __init__(): 623: Using proactor: IocpProactor
+2022-06-12 15:39:54,887: INFO: executor.py: _welcome(): 362: Bot: edw_assistant_bot [@edw_assistant_bot]
+2022-06-12 15:39:55,042: WARNING: executor.py: _skip_updates(): 358: Updates were skipped successfully.
+2022-06-12 15:39:55,043: INFO: dispatcher.py: start_polling(): 358: Start polling.
+2022-06-12 15:40:27,324: ERROR: base_events.py: default_exception_handler(): 1738: Task exception was never retrieved
+future: <Task finished name='Task-10' coro=<Dispatcher._process_polling_updates() done, defined at C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py:407> exception=OSError(22, 'Invalid argument')>
+Traceback (most recent call last):
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py", line 415, in _process_polling_updates
+    for responses in itertools.chain.from_iterable(await self.process_updates(updates, fast)):
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py", line 235, in process_updates
+    return await asyncio.gather(*tasks)
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\handler.py", line 116, in notify
+    response = await handler_obj.handler(*args, **partial_data)
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py", line 302, in process_update
+    return await self.my_chat_member_handlers.notify(update.my_chat_member)
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\handler.py", line 100, in notify
+    await self.dispatcher.middleware.trigger(f"pre_process_{self.middleware_key}", args + (data,))
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\middlewares.py", line 53, in trigger
+    await app.trigger(action, args)
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\middlewares.py", line 106, in trigger
+    await handler(*args)
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\contrib\middlewares\logging.py", line 169, in on_pre_process_my_chat_member
+    f"Old state: {my_chat_member_update.old_chat_member.to_python()} "
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\types\base.py", line 177, in to_python
+    value = self.props[name].export(self)
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\types\fields.py", line 95, in export
+    return self.serialize(self.get_value(instance))
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\types\fields.py", line 172, in serialize
+    return round(value.timestamp())
+OSError: [Errno 22] Invalid argument
+2022-06-12 15:40:27,505: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1425] in chat [private:320191396]
+2022-06-12 15:40:30,240: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995272]: [success] (in 2735 ms)
+2022-06-12 15:40:37,534: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1427] in chat [private:320191396]
+2022-06-12 15:40:37,644: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995273]: [success] (in 111 ms)
+2022-06-12 15:40:46,646: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1429] in chat [private:320191396]
+2022-06-12 15:40:48,473: ERROR: db.py: create_superuser(): 328: User with e-mail 'kt215m@gmail.com' does not exists in database. STATUS_FAIL
+2022-06-12 15:40:48,650: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995274]: [success] (in 2005 ms)
+2022-06-12 15:40:56,141: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1431] in chat [private:320191396]
+2022-06-12 15:40:56,245: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995275]: [success] (in 104 ms)
+2022-06-12 15:42:39,388: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1433] in chat [private:320191396]
+2022-06-12 15:42:39,502: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995276]: [success] (in 115 ms)
+2022-06-12 15:42:48,067: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1435] in chat [private:320191396]
+2022-06-12 15:42:49,724: ERROR: db.py: create_superuser(): 328: User with e-mail 'kt215m@gmail.com' does not exists in database. STATUS_FAIL
+2022-06-12 15:42:49,826: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995277]: [success] (in 1759 ms)
+2022-06-12 15:43:26,469: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1437] in chat [private:320191396]
+2022-06-12 15:43:26,627: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995278]: [success] (in 158 ms)
+2022-06-12 15:44:43,979: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1439] in chat [private:320191396]
+2022-06-12 15:44:45,884: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995279]: [success] (in 1905 ms)
+2022-06-12 15:44:48,354: INFO: logging.py: on_pre_process_callback_query(): 101: Received callback query [ID:1375211574372213489] from user [ID:320191396] for message [ID:1440] in chat [private:320191396] with data: button:registrate originally posted by user [ID:5043190620]
+2022-06-12 15:44:48,465: INFO: logging.py: on_post_process_callback_query(): 121: Unhandled callback query [ID:1375211574372213489] from user [ID:320191396] for message [ID:1440] in chat [private:320191396] with data: button:registrate originally posted by user [ID:5043190620]
+2022-06-12 15:44:48,465: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995280]: [success] (in 112 ms)
+2022-06-12 15:44:52,074: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1442] in chat [private:320191396]
+2022-06-12 15:44:52,178: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995281]: [success] (in 104 ms)
+2022-06-12 15:44:55,718: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1444] in chat [private:320191396]
+2022-06-12 15:44:55,825: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995282]: [success] (in 107 ms)
+2022-06-12 15:44:59,718: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1446] in chat [private:320191396]
+2022-06-12 15:44:59,900: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995283]: [success] (in 182 ms)
+2022-06-12 15:45:10,402: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1448] in chat [private:320191396]
+2022-06-12 15:45:12,644: INFO: db.py: add_user(): 136: User 'Edward None Grigo' with telegram id '320191396' has been added successfully. STATUS_OK
+2022-06-12 15:45:12,800: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995284]: [success] (in 2398 ms)
+2022-06-12 15:45:19,533: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1450] in chat [private:320191396]
+2022-06-12 15:45:19,647: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995285]: [success] (in 114 ms)
+2022-06-12 15:45:27,395: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1452] in chat [private:320191396]
+2022-06-12 15:45:29,789: INFO: db.py: create_superuser(): 346: Role of user with email 'kt215m@gmail.com' has been changed to 'admin'. STATUS_OK
+2022-06-12 15:45:29,921: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995286]: [success] (in 2526 ms)
+2022-06-12 15:46:40,300: INFO: dispatcher.py: stop_polling(): 433: Stop polling...
+2022-06-12 15:46:40,302: WARNING: executor.py: start_polling(): 329: Goodbye!
+2022-06-13 00:46:44,169: DEBUG: proactor_events.py: __init__(): 623: Using proactor: IocpProactor
+2022-06-13 00:46:44,545: INFO: executor.py: _welcome(): 362: Bot: edw_assistant_bot [@edw_assistant_bot]
+2022-06-13 00:46:44,701: WARNING: executor.py: _skip_updates(): 358: Updates were skipped successfully.
+2022-06-13 00:46:44,704: INFO: dispatcher.py: start_polling(): 358: Start polling.
+2022-06-13 00:47:06,036: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1455] in chat [private:320191396]
+2022-06-13 00:47:06,038: INFO: logging.py: on_pre_process_error(): 150: Process update [ID:266995288]: [failed] (in 2 ms)
+2022-06-13 00:47:06,042: ERROR: base_events.py: default_exception_handler(): 1738: Task exception was never retrieved
+future: <Task finished name='Task-10' coro=<Dispatcher._process_polling_updates() done, defined at C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py:407> exception=AttributeError("'tuple' object has no attribute '_instantiate_plugins'")>
+Traceback (most recent call last):
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py", line 415, in _process_polling_updates
+    for responses in itertools.chain.from_iterable(await self.process_updates(updates, fast)):
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py", line 235, in process_updates
+    return await asyncio.gather(*tasks)
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\handler.py", line 116, in notify
+    response = await handler_obj.handler(*args, **partial_data)
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py", line 256, in process_update
+    return await self.message_handlers.notify(update.message)
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\handler.py", line 116, in notify
+    response = await handler_obj.handler(*args, **partial_data)
+  File "C:\Users\Пользователь\Projects\taxBot\src\handlers.py", line 56, in cmd_start
+    reply_markup=get_keyboard(message.from_user.id))
+  File "C:\Users\Пользователь\Projects\taxBot\src\handlers.py", line 36, in get_keyboard
+    driver = DBDriver()
+  File "C:\Users\Пользователь\Projects\taxBot\src\db.py", line 84, in __init__
+    self._engine = create_engine(self._database_url)
+  File "<string>", line 2, in create_engine
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\sqlalchemy\util\deprecations.py", line 309, in warned
+    return fn(*args, **kwargs)
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\sqlalchemy\engine\create.py", line 532, in create_engine
+    u, plugins, kwargs = u._instantiate_plugins(kwargs)
+AttributeError: 'tuple' object has no attribute '_instantiate_plugins'
+2022-06-13 00:47:50,181: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1456] in chat [private:320191396]
+2022-06-13 00:47:50,182: INFO: logging.py: on_pre_process_error(): 150: Process update [ID:266995289]: [failed] (in 1 ms)
+2022-06-13 00:47:50,182: ERROR: base_events.py: default_exception_handler(): 1738: Task exception was never retrieved
+future: <Task finished name='Task-15' coro=<Dispatcher._process_polling_updates() done, defined at C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py:407> exception=AttributeError("'tuple' object has no attribute '_instantiate_plugins'")>
+Traceback (most recent call last):
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py", line 415, in _process_polling_updates
+    for responses in itertools.chain.from_iterable(await self.process_updates(updates, fast)):
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py", line 235, in process_updates
+    return await asyncio.gather(*tasks)
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\handler.py", line 116, in notify
+    response = await handler_obj.handler(*args, **partial_data)
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py", line 256, in process_update
+    return await self.message_handlers.notify(update.message)
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\handler.py", line 116, in notify
+    response = await handler_obj.handler(*args, **partial_data)
+  File "C:\Users\Пользователь\Projects\taxBot\src\handlers.py", line 56, in cmd_start
+    reply_markup=get_keyboard(message.from_user.id))
+  File "C:\Users\Пользователь\Projects\taxBot\src\handlers.py", line 36, in get_keyboard
+    driver = DBDriver()
+  File "C:\Users\Пользователь\Projects\taxBot\src\db.py", line 84, in __init__
+    self._engine = create_engine(self._database_url)
+  File "<string>", line 2, in create_engine
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\sqlalchemy\util\deprecations.py", line 309, in warned
+    return fn(*args, **kwargs)
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\sqlalchemy\engine\create.py", line 532, in create_engine
+    u, plugins, kwargs = u._instantiate_plugins(kwargs)
+AttributeError: 'tuple' object has no attribute '_instantiate_plugins'
+2022-06-13 00:47:55,135: INFO: dispatcher.py: stop_polling(): 433: Stop polling...
+2022-06-13 00:47:55,140: WARNING: executor.py: start_polling(): 329: Goodbye!
+2022-06-13 00:47:58,417: DEBUG: proactor_events.py: __init__(): 623: Using proactor: IocpProactor
+2022-06-13 00:47:58,730: INFO: executor.py: _welcome(): 362: Bot: edw_assistant_bot [@edw_assistant_bot]
+2022-06-13 00:47:59,074: WARNING: executor.py: _skip_updates(): 358: Updates were skipped successfully.
+2022-06-13 00:47:59,075: INFO: dispatcher.py: start_polling(): 358: Start polling.
+2022-06-13 00:48:01,673: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1457] in chat [private:320191396]
+2022-06-13 00:48:01,674: INFO: logging.py: on_pre_process_error(): 150: Process update [ID:266995290]: [failed] (in 1 ms)
+2022-06-13 00:48:01,675: ERROR: base_events.py: default_exception_handler(): 1738: Task exception was never retrieved
+future: <Task finished name='Task-9' coro=<Dispatcher._process_polling_updates() done, defined at C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py:407> exception=AttributeError("'tuple' object has no attribute '_instantiate_plugins'")>
+Traceback (most recent call last):
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py", line 415, in _process_polling_updates
+    for responses in itertools.chain.from_iterable(await self.process_updates(updates, fast)):
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py", line 235, in process_updates
+    return await asyncio.gather(*tasks)
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\handler.py", line 116, in notify
+    response = await handler_obj.handler(*args, **partial_data)
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py", line 256, in process_update
+    return await self.message_handlers.notify(update.message)
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\aiogram\dispatcher\handler.py", line 116, in notify
+    response = await handler_obj.handler(*args, **partial_data)
+  File "C:\Users\Пользователь\Projects\taxBot\src\handlers.py", line 56, in cmd_start
+    reply_markup=get_keyboard(message.from_user.id))
+  File "C:\Users\Пользователь\Projects\taxBot\src\handlers.py", line 36, in get_keyboard
+    driver = DBDriver()
+  File "C:\Users\Пользователь\Projects\taxBot\src\db.py", line 84, in __init__
+    self._engine = create_engine(self._database_url)
+  File "<string>", line 2, in create_engine
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\sqlalchemy\util\deprecations.py", line 309, in warned
+    return fn(*args, **kwargs)
+  File "C:\Users\Пользователь\Projects\taxBot\venv\lib\site-packages\sqlalchemy\engine\create.py", line 532, in create_engine
+    u, plugins, kwargs = u._instantiate_plugins(kwargs)
+AttributeError: 'tuple' object has no attribute '_instantiate_plugins'
+2022-06-13 00:48:38,036: INFO: dispatcher.py: stop_polling(): 433: Stop polling...
+2022-06-13 00:48:38,037: WARNING: executor.py: start_polling(): 329: Goodbye!
+2022-06-13 00:50:20,260: DEBUG: proactor_events.py: __init__(): 623: Using proactor: IocpProactor
+2022-06-13 00:50:20,643: INFO: executor.py: _welcome(): 362: Bot: edw_assistant_bot [@edw_assistant_bot]
+2022-06-13 00:50:20,837: WARNING: executor.py: _skip_updates(): 358: Updates were skipped successfully.
+2022-06-13 00:50:20,838: INFO: dispatcher.py: start_polling(): 358: Start polling.
+2022-06-13 00:50:22,849: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1458] in chat [private:320191396]
+2022-06-13 00:50:25,110: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995291]: [success] (in 2261 ms)
+2022-06-13 00:50:31,384: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1460] in chat [private:320191396]
+2022-06-13 00:50:31,505: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995292]: [success] (in 121 ms)
+2022-06-13 00:50:38,675: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1462] in chat [private:320191396]
+2022-06-13 00:50:38,797: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995293]: [success] (in 122 ms)
+2022-06-13 00:51:09,586: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1464] in chat [private:320191396]
+2022-06-13 00:51:09,739: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995294]: [success] (in 153 ms)
+2022-06-13 00:51:18,954: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1466] in chat [private:320191396]
+2022-06-13 00:51:19,205: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995295]: [success] (in 251 ms)
+2022-06-13 00:51:27,411: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1468] in chat [private:320191396]
+2022-06-13 00:51:27,524: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995296]: [success] (in 113 ms)
+2022-06-13 00:51:29,632: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1470] in chat [private:320191396]
+2022-06-13 00:51:29,898: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995297]: [success] (in 267 ms)
+2022-06-13 00:51:39,651: INFO: logging.py: on_pre_process_message(): 36: Received message [ID:1472] in chat [private:320191396]
+2022-06-13 00:51:41,518: WARNING: db.py: add_user(): 112: User 'Qwer Qwer Qwer' with telegram id '320191396' already exists in database. STATUS_USER_ALREADY_EXIST
+2022-06-13 00:51:41,625: INFO: logging.py: on_post_process_update(): 33: Process update [ID:266995298]: [success] (in 1974 ms)
+2022-06-13 00:52:10,244: INFO: dispatcher.py: stop_polling(): 433: Stop polling...
+2022-06-13 00:52:10,246: WARNING: executor.py: start_polling(): 329: Goodbye!

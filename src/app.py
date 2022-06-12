@@ -12,7 +12,6 @@ from aiogram.dispatcher.filters import Text
 
 from settings import BOT_TOKEN, WEBHOOK_URL, WEBHOOK_PATH, WEBHOOK_HOST, WEBAPP_HOST, WEBAPP_PORT, \
     LOCAL_DEV
-from src.filters import IsAdmin
 from utils import setup_logging
 
 try:
@@ -66,7 +65,6 @@ commands_list = [
 
 def main():
     setup_logging()
-    dp.filters_factory.bind(IsAdmin)
 
     dp.register_message_handler(handlers.cmd_start, commands="start")
     dp.register_message_handler(handlers.additional_info, commands="add_info")

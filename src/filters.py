@@ -5,6 +5,7 @@ from src.settings import SUPERUSER_IDS
 
 
 class IsAdmin(BoundFilter):
+    key = "is_admin"
 
     def __init__(self, commands: Command):
         self.commands = commands

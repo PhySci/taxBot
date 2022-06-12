@@ -80,8 +80,8 @@ class DBDriver:
         _DB_PORT = os.environ.get("DB_PORT")
         _DB_USER = os.environ.get("DB_USER")
         _DB_PASSWORD = os.environ.get("DB_PASSWORD")
-        self._database_url = f"postgresql://{_DB_USER}:{_DB_PASSWORD}@" \
-                             f"{_DB_ADDRESS}:{_DB_PORT}/{_DB_NAME}"
+        self._database_url = "postgresql://{0}:{1}@{2}:{3}/{4}".\
+            format(_DB_USER, _DB_PASSWORD, _DB_ADDRESS, _DB_PORT, _DB_NAME)
         self._engine = create_engine(self._database_url)
         self._sm = sessionmaker(bind=self._engine)
         Base.metadata.create_all(self._engine)
@@ -110,8 +110,8 @@ class DBDriver:
         c = session.query(User.id).filter(User.tg_id == user["tg_id"]).count()
         if c > 0:
             _logger.warning(
-                f"User '{user['first_name']} {user['patronymic_name']} {user['last_name']}' with "
-                f"telegram id '{user['tg_id']}' already exists in database. STATUS_USER_ALREADY_EXIST"
+                "User '%s %s %s' with telegram id '%s' already exists in database. STATUS_USER_ALREADY_EXIST",
+                user['first_name'], user['patronymic_name'], user['last_name'], user['tg_id']
             )
             return STATUS_USER_ALREADY_EXIST
 
@@ -134,14 +134,14 @@ class DBDriver:
 
         if id is not None:
             _logger.info(
-                f"User '{user['first_name']} {user['patronymic_name']} {user['last_name']}' "
-                f"with telegram id '{user['tg_id']}' has been added successfully. STATUS_OK"
+                "User '%s %s %s' with telegram id '%s' has been added successfully. STATUS_OK",
+                user['first_name'], user['patronymic_name'], user['last_name'], user['tg_id']
             )
             return STATUS_OK
         else:
             _logger.error(
-                f"User '{user['first_name']} {user['patronymic_name']} {user['last_name']}' "
-                f"with telegram id '{user['tg_id']}' has not been added. STATUS_FAIL"
+                "User '%s %s %s' with telegram id '%s' has not been added. STATUS_FAIL",
+                user['first_name'], user['patronymic_name'], user['last_name'], user['tg_id']
             )
             return STATUS_FAIL
 
@@ -150,8 +150,8 @@ class DBDriver:
         db_user = session.query(User).filter(User.tg_id == user["tg_id"])
         if db_user.count() == 0:
             _logger.error(
-                f"User '{user['first_name']} {user['patronymic_name']} {user['last_name']}' with "
-                f"telegram id '{user['tg_id']}' does not exists in database. STATUS_FAIL"
+                "User '%s %s %s' with telegram id '%s' does not exists in database. STATUS_FAIL",
+                user['first_name'], user['patronymic_name'], user['last_name'], user['tg_id']
             )
             return STATUS_FAIL
 
@@ -159,8 +159,7 @@ class DBDriver:
 
         if user.status == "deactive":
             _logger.warning(
-                f"Status of user with id '{user.id}' is already 'deactive'. "
-                f"STATUS_USER_ALREADY_DEACTIVATED"
+                "Status of user with id '%s' is already 'deactive'. STATUS_USER_ALREADY_DEACTIVATED", user.id
             )
             return STATUS_USER_ALREADY_DEACTIVATED
 
@@ -169,7 +168,7 @@ class DBDriver:
         status = user.status
         session.close()
         if status == "deactive":
-            _logger.info(f"Status of user with id '{user.id}' has been changed to 'deactive'. STATUS_OK")
+            _logger.info("Status of user with id '%s' has been changed to 'deactive'. STATUS_OK", user.id)
             return STATUS_OK
 
     def is_user_exist(self, user_id: int) -> bool:
@@ -269,7 +268,7 @@ class DBDriver:
         session = self._sm()
         c = session.query(MailList.id).filter(MailList.email == email).count()
         if c > 0:
-            _logger.warning(f"E-mail {email} already exists in database. STATUS_MAIL_ALREADY_EXIST")
+            _logger.warning("E-mail %s already exists in database. STATUS_MAIL_ALREADY_EXIST", email)
             return STATUS_MAIL_ALREADY_EXIST
         new_email = MailList(
             email=email,
@@ -281,10 +280,10 @@ class DBDriver:
         id = new_email.id
         session.close()
         if id is not None:
-            _logger.info(f"E-mail {email} has been added successfully. STATUS_OK")
+            _logger.info("E-mail %s has been added successfully. STATUS_OK", email)
             return STATUS_OK
         else:
-            _logger.error(f"E-mail {email} has not been added. STATUS_FAIL")
+            _logger.error("E-mail %s has not been added. STATUS_FAIL", email)
             return STATUS_FAIL
 
     def get_email_list_for_sending(self):
@@ -326,7 +325,7 @@ class DBDriver:
         db_user = session.query(User).filter(User.email == email)
         if db_user.count() == 0:
             _logger.error(
-                f"User with e-mail '{email}' does not exists in database. STATUS_FAIL"
+                "User with e-mail %s does not exists in database. STATUS_FAIL", email
             )
             return STATUS_FAIL
 
@@ -334,14 +333,14 @@ class DBDriver:
 
         if user.role == "admin":
             _logger.warning(
-                f"Role of user with e-mail '{email}' is already 'admin'. STATUS_PERMISSIONS_EXIST"
+                "Role of user with e-mail %s is already 'admin'. STATUS_PERMISSIONS_EXIST", email
             )
             return STATUS_PERMISSIONS_EXIST
 
         user.role = "admin"
         session.commit()
-        status = user.role
+        # status = user.role
         session.close()
-        if status == "admin":
-            _logger.info(f"Role of user with email '{email}' has been changed to 'admin'. STATUS_OK")
-            return STATUS_OK
+        # if status == "admin":
+        #     _logger.info("Role of user with email %s has been changed to 'admin'. STATUS_OK" % email)
+        #     return STATUS_OK

@@ -6,4 +6,3 @@
 src/log.txt
 **/.env
 *.pyc
-src/logs/
