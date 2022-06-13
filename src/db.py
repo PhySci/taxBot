@@ -339,8 +339,8 @@ class DBDriver:
 
         user.role = "admin"
         session.commit()
-        # status = user.role
+        status = user.role
         session.close()
-        # if status == "admin":
-        #     _logger.info("Role of user with email %s has been changed to 'admin'. STATUS_OK" % email)
-        #     return STATUS_OK
+        if status == "admin":
+            _logger.info("Role of user with email %s has been changed to 'admin'. STATUS_OK" % email)
+            return STATUS_OK
