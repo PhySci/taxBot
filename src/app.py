@@ -79,7 +79,7 @@ def main():
 
     dp.register_callback_query_handler(
         handlers.from_button,
-        handlers.instance.filter(action=["registrate", "info", "cancel"]), state="*")
+        handlers.instance.filter(action=["registrate", "info", "cancel", "add_info"]), state="*")
 
     dp.register_message_handler(handlers.cmd_cancel, Text(equals="отмена", ignore_case=True), state="*")
     dp.register_message_handler(handlers.cmd_cancel, Text(equals="/cancel", ignore_case=True), state="*")

@@ -5,6 +5,7 @@ from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.utils.callback_data import CallbackData
+import jinja2
 
 from db import (
     DBDriver, STATUS_OK, STATUS_FAIL, STATUS_RECEIPT_ALREADY_EXIST,
@@ -32,6 +33,7 @@ def get_keyboard(user_tg_id):
     driver = DBDriver()
     if driver.is_user_exist(user_tg_id):
         buttons = [
+            types.InlineKeyboardButton(text="Как создать и отправить чек", callback_data=instance.new(action="add_info")),
             types.InlineKeyboardButton(text="Доп. информация", callback_data=instance.new(action="info")),
         ]
         keyboard.add(*buttons)
@@ -66,6 +68,13 @@ async def from_button(call: types.CallbackQuery, callback_data: dict, state: FSM
         else:
             await state.finish()
             await call.message.answer("Действие отменено")
+    elif callback_data["action"] == "add_info":
+        templateLoader = jinja2.FileSystemLoader(searchpath=os.path.join(os.path.dirname(__file__), "templates"))
+        templateEnv = jinja2.Environment(loader=templateLoader)
+        TEMPLATE_FILE = "help.html"
+        template = templateEnv.get_template(TEMPLATE_FILE)
+        outputText = template.render()
+        await call.message.answer(outputText, parse_mode="Markdown")
 
 
 async def user_input_start(message: types.Message):
@@ -119,6 +128,15 @@ async def user_input_email(message: types.Message, state: FSMContext):
     await state.finish()
     if status == STATUS_OK:
         await message.answer("Вы успешно зарегистрированы.")
+        await message.answer("Для вашего удобства ниже представлена инструкция как правильно создать чек и как отправить его, используя этот бот")
+
+        templateLoader = jinja2.FileSystemLoader(searchpath=os.path.join(os.path.dirname(__file__), "templates"))
+        templateEnv = jinja2.Environment(loader=templateLoader)
+        TEMPLATE_FILE = "help.html"
+        template = templateEnv.get_template(TEMPLATE_FILE)
+        outputText = template.render()  # this is where to put args to the template renderer
+        await message.answer(outputText, parse_mode="Markdown")
+
     elif status == STATUS_USER_ALREADY_EXIST:
         await message.answer("Этот пользователь телеграмма уже есть в нашей базе.")
     else:
@@ -140,7 +158,12 @@ async def catch_other_message(message: types.Message):
 
 
 async def additional_info(message: types.Message):
-    await message.answer("Тут будет дополнительная информация")
+    templateLoader = jinja2.FileSystemLoader(searchpath=os.path.join(os.path.dirname(__file__), "templates"))
+    templateEnv = jinja2.Environment(loader=templateLoader)
+    TEMPLATE_FILE = "help.html"
+    template = templateEnv.get_template(TEMPLATE_FILE)
+    outputText = template.render()
+    await message.answer(outputText, parse_mode="Markdown")
 
 
 async def get_help_command(message: types.Message):
