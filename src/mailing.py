@@ -57,11 +57,19 @@ def json_to_excel(json_data: dict) -> str:
 
 def send_email(email_list: list, excel_filepath: str) -> SendingStatus:
     msg = MIMEMultipart()
-    msg['Subject'] = "Mailing list from the TaxBot according to your request (EXCEL file)"
+    msg['Subject'] = "Чеки Яндекс.Практикума"
     msg['From'] = EMAIL_LOGIN
+    msg["Reply"] = EMAIL_LOGIN
     msg['To'] = ', '.join(email_list)
-    body = "This is an automated email"
-    msg.attach(MIMEText(body, 'plain'))
+    body = "<html><body>Добрый день, <p>" \
+           "Во вложении к этому письму вы можете найти ссылки на чеки СЗ, собранные нашим ботом <p>" \
+           "------ <p>" \
+           "Вы получили это письмо, так как ваш email адрес указан в качестве получателя собранных чеков. <p>" \
+           "Если письмо попало к вам по ошибке, то сообщите об этом в обратном письме." \
+           "</body></html>"
+    msg.attach(MIMEText(body, 'html'))
+
+
     part = MIMEBase('application', "octet-stream")
     with open(excel_filepath, "rb") as file:
         part.set_payload(file.read())
@@ -69,6 +77,7 @@ def send_email(email_list: list, excel_filepath: str) -> SendingStatus:
     part.add_header('Content-Disposition', f'attachment; filename="{os.path.basename(excel_filepath)}"')
     msg.attach(part)
     os.remove(excel_filepath)
+
     try:
         server = smtplib.SMTP_SSL(host=SMTP_SERVER, port=SMTP_PORT, timeout=5)
         server.login(EMAIL_LOGIN, EMAIL_PASSWORD)
@@ -93,9 +102,9 @@ def main():
 
     receipts = driver.get_receipts(period_start_date, period_end_date)
     excel_filepath = json_to_excel(receipts)
-    status = send_email(email_list, excel_filepath)
+    send_email(email_list, excel_filepath)
 
-    driver.save_period(datetime.today(), period_start_date, period_end_date, len(receipts["data"]), status)
+    driver.save_period(datetime.today(), period_start_date, period_end_date, len(receipts["data"]), 1)
 
 
 def execute_mailing_in_chat():
