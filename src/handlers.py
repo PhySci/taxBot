@@ -48,7 +48,7 @@ def get_keyboard(user_tg_id):
 
 
 async def cmd_start(message: types.Message):
-    await message.answer("Добро полажловать в TaxBot!"
+    await message.answer("Добро пожаловать в TaxBot!"
                          " Нажмите кнопку или введите команду"
                          " (посмотреть можно введя /help) ",
                          reply_markup=get_keyboard(message.from_user.id))
@@ -112,7 +112,8 @@ async def user_input_last_name(message: types.Message, state: FSMContext):
         return
     await state.update_data(last_name=message.text.capitalize())
     await UserInput.next()
-    await message.answer("Введите ваш e-mail: ")
+    await message.answer("Введите ваш e-mail. \n Пожалуйста, укажите тот адрес, который вы регулярно проверяете. \n"
+                         "В случае возникновения вопросов, на эту почту будут приходить письма от Анкора")
 
 
 async def user_input_email(message: types.Message, state: FSMContext):
