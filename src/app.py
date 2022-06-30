@@ -38,7 +38,7 @@ async def set_default_commands(dp):
         BotCommand("start", "Запуск"),
         BotCommand("help", "Помощь"),
         BotCommand("registration", "Зарегистрироваться"),
-        BotCommand("add_info", "Доп. информация"),
+        BotCommand("info", "Доп. информация"),
         BotCommand("cancel", "Отменить текущее действие")
     ])
 
@@ -58,7 +58,7 @@ commands_list = [
     "start",
     "registration",
     "help",
-    "add_info",
+    "info",
     "cancel"
 ]
 
@@ -67,7 +67,7 @@ def main():
     setup_logging()
 
     dp.register_message_handler(handlers.cmd_start, commands="start")
-    dp.register_message_handler(handlers.additional_info, commands="add_info")
+    dp.register_message_handler(handlers.additional_info, commands="info")
     dp.register_message_handler(handlers.get_help_command, commands="help")
 
     dp.register_message_handler(
@@ -79,7 +79,7 @@ def main():
 
     dp.register_callback_query_handler(
         handlers.from_button,
-        handlers.instance.filter(action=["registrate", "info", "cancel", "add_info"]), state="*")
+        handlers.instance.filter(action=["registrate", "info", "cancel", "info"]), state="*")
 
     dp.register_message_handler(handlers.cmd_cancel, Text(equals="отмена", ignore_case=True), state="*")
     dp.register_message_handler(handlers.cmd_cancel, Text(equals="/cancel", ignore_case=True), state="*")

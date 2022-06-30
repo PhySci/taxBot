@@ -33,7 +33,7 @@ def get_keyboard(user_tg_id):
     driver = DBDriver()
     if driver.is_user_exist(user_tg_id):
         buttons = [
-            types.InlineKeyboardButton(text="Как создать и отправить чек", callback_data=instance.new(action="add_info")),
+            types.InlineKeyboardButton(text="Как создать и отправить чек", callback_data=instance.new(action="info")),
             types.InlineKeyboardButton(text="Доп. информация", callback_data=instance.new(action="info")),
         ]
         keyboard.add(*buttons)
@@ -68,7 +68,7 @@ async def from_button(call: types.CallbackQuery, callback_data: dict, state: FSM
         else:
             await state.finish()
             await call.message.answer("Действие отменено")
-    elif callback_data["action"] == "add_info":
+    elif callback_data["action"] == "info":
         templateLoader = jinja2.FileSystemLoader(searchpath=os.path.join(os.path.dirname(__file__), "templates"))
         templateEnv = jinja2.Environment(loader=templateLoader)
         TEMPLATE_FILE = "help.html"
@@ -155,7 +155,7 @@ async def cmd_cancel(message: types.Message, state: FSMContext):
 
 
 async def catch_other_message(message: types.Message):
-    await message.answer("Неизвестный тип сообщений. Воспользуйся командой /help")
+    await message.answer("Неизвестный тип сообщений. Бот принимает только ссылки на чеки, сформированные на сайте nalog.ru. Воспользуйся командой /info")
 
 
 async def additional_info(message: types.Message):
@@ -170,7 +170,7 @@ async def additional_info(message: types.Message):
 async def get_help_command(message: types.Message):
     await message.answer(
         "* Чтобы зарегистрироваться, введите команду /registration\n"
-        "* Чтобы получить дополнительную информацию, введите команду /add_info\n"
+        "* Чтобы получить дополнительную информацию, введите команду /info\n"
         "* Чтобы отменить ввод, введите команду /cancel или напишите 'отмена'\n"
     )
 
