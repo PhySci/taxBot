@@ -155,7 +155,8 @@ async def cmd_cancel(message: types.Message, state: FSMContext):
 
 
 async def catch_other_message(message: types.Message):
-    await message.answer("Неизвестный тип сообщений. Бот принимает только ссылки на чеки, сформированные на сайте nalog.ru. Воспользуйся командой /info")
+    await message.answer("Неизвестный тип сообщений. Бот принимает только ссылки на чеки, сформированные на сайте nalog.ru. \n"
+                         "Чтобы увидеть справку, введите команду /info")
 
 
 async def additional_info(message: types.Message):
