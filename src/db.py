@@ -3,7 +3,7 @@ import logging
 import os
 import enum
 
-from sqlalchemy import Column, String, Integer, ForeignKey, create_engine, DateTime, Boolean, Enum
+from sqlalchemy import Column, String, Integer, ForeignKey, create_engine, DateTime, Boolean, Enum, BigInteger
 from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.sql import func
@@ -24,7 +24,7 @@ STATUS_FAIL = 10
 class User(Base):
     __tablename__ = "user"
     id = Column(Integer, primary_key=True)
-    tg_id = Column(Integer)
+    tg_id = Column(BigInteger)
     first_name = Column(String)
     last_name = Column(String)
     patronymic_name = Column(String)
@@ -43,7 +43,7 @@ class Receipt(Base):
     user_id = Column(Integer, ForeignKey("user.id"))
     status = Column(String)
     text = Column(String)
-    tg_id = Column(String)
+    tg_id = Column(BigInteger)
     create_dt = Column(DateTime(timezone=True), server_default=func.now())
     update_dt = Column(DateTime(timezone=True), onupdate=func.now())
 
