@@ -104,7 +104,7 @@ def main():
     excel_filepath = json_to_excel(receipts)
     send_email(email_list, excel_filepath)
 
-    driver.save_period(datetime.today(), period_start_date, period_end_date, len(receipts["data"]), 1)
+    driver.save_period(datetime.today(), period_start_date, period_end_date, len(receipts["data"]), SendingStatus.OK)
 
 
 def execute_mailing_in_chat():
